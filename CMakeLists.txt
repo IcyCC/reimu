@@ -12,5 +12,11 @@ add_executable(reimu
         src/Util.cpp
         src/Util.h
         src/reimu.h
-        tests/test_timer.cpp
+        src/SafeQueue.h
+        src/ThreadingPool.cpp
+        src/ThreadingPool.h
+        src/SafeCounter.h
+        src/Task.h
+        #tests/test_timer.cpp
+        tests/test_threading.cpp
         )

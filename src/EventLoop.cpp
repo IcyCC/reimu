@@ -10,13 +10,17 @@ namespace reimu {
 
     class DefaultEventLoopImp : public EventLoopImpAbc {
     public:
-        DefaultEventLoopImp(EventLoop *loop) {
+        DefaultEventLoopImp(EventLoop *loop)  {
             _loop = loop;
+            _threading_pool = std::make_shared<ThreadingPool>(5, -1);
+            _threading_pool->Start();
         }
 
     public:
         // 任务相关
-        TaskPtr CreateTask(const TaskCallBack &cb, const TaskCallBack &succ_cb = nullptr) override;
+        TaskPtr CreateTask(const TaskCallBack &cb) override;
+
+        void CallInThreading(TaskPtr task) override;
 
     public:
         TimerPtr CallAt(const TaskCallBack &cb, time_t at) override;
@@ -33,34 +37,31 @@ namespace reimu {
 
 
     private:
-        std::map<int, TaskPtr> _tasks;
-
         typedef std::pair<time_t, int> TimerKey;
-
         class TimerKeyCompare {
         public:
             bool operator()(const TimerKey &t1, const TimerKey &t2) const {
                 return t1.first > t2.first;
             }
         };
-
         std::map<TimerKey, TimerPtr, TimerKeyCompare> _timers;
+
+        std::shared_ptr<ThreadingPool> _threading_pool;
     };
 
 
     TaskPtr
-    DefaultEventLoopImp::CreateTask(const reimu::TaskCallBack &cb, const reimu::TaskCallBack &succ_cb) {
-        auto t = std::make_shared<Task>(this->_loop, cb, succ_cb);
-        int task_id = 1;
+    DefaultEventLoopImp::CreateTask(const reimu::TaskCallBack &cb) {
+        auto t = std::make_shared<Task>(this->_loop, cb);
+        int task_id = REIMU_GLOBAL_COUNTER.Add();
         t->SetStatus(Task::TaskStatus::PENDING);
         t->SetId(task_id);
-        _tasks.insert(std::make_pair(task_id, t));
         return t;
     }
 
     TimerPtr DefaultEventLoopImp::CallAt(const reimu::TaskCallBack &cb, time_t at) {
         auto t = std::make_shared<Timer>(this->_loop, cb, at, -1);
-        int timer_id = 1;
+        int timer_id = REIMU_GLOBAL_COUNTER.Add();
         t->SetId(timer_id);
         _timers.insert(std::make_pair(std::make_pair(at, timer_id), t));
         return t;
@@ -74,7 +75,7 @@ namespace reimu {
     TimerPtr DefaultEventLoopImp::CallRepeat(const reimu::TaskCallBack &cb, time_t r) {
         time_t at = util::TimeMilli() + r;
         auto t = std::make_shared<Timer>(this->_loop, cb, at, r);
-        int timer_id = 1;
+        int timer_id = REIMU_GLOBAL_COUNTER.Add();
         t->SetId(timer_id);
         _timers.insert(std::make_pair(std::make_pair(at, timer_id), t));
         return t;
@@ -87,6 +88,10 @@ namespace reimu {
             return 1;
         }
         return 0;
+    }
+
+    void DefaultEventLoopImp::CallInThreading(reimu::TaskPtr task) {
+        _threading_pool->AddTask(task);
     }
 
     void DefaultEventLoopImp::loopTimer() {
@@ -115,8 +120,8 @@ namespace reimu {
         _imp = std::make_unique<DefaultEventLoopImp>(this);
     }
 
-    TaskPtr EventLoop::CreateTask(const reimu::TaskCallBack &cb, const reimu::TaskCallBack &succ_cb) {
-        return _imp->CreateTask(cb, succ_cb);
+    TaskPtr EventLoop::CreateTask(const reimu::TaskCallBack &cb) {
+        return _imp->CreateTask(cb);
     }
 
     TimerPtr EventLoop::CallLater(const reimu::TaskCallBack &cb, time_t t) {
@@ -139,6 +144,14 @@ namespace reimu {
         while (true) {
             _imp->LoopOnce();
         }
+    }
+
+    void EventLoop::CallInThreading(reimu::TaskPtr task) {
+        return _imp->CallInThreading(task);
+    }
+
+    int Timer::Cancel(){
+        return this->_loop->CancelTimer(this);
     }
 
 
