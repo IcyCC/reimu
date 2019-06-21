@@ -10,7 +10,7 @@
 
 namespace reimu {
 
-    struct noncopyable {
+    class noncopyable {
     protected:
         noncopyable() = default;
 

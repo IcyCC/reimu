@@ -11,11 +11,11 @@ class Socket {
 public:
     int _fd;
 public:
-    SocketFd(int socket_fd)
+    explicit Socket(int socket_fd)
     :_fd(socket_fd)
     {}
 
-    +Socket() {
+    Socket() {
         close(_fd);
     }
 

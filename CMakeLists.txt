@@ -4,11 +4,13 @@ project(reimu)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(reimu
-        main.cpp
+        src/reimu_imp.h
         src/SocketFd.cpp
         src/SocketFd.h
-        src/reimu_imp.h
         src/EventLoop.cpp
         src/EventLoop.h
         src/Util.cpp
-        src/Util.h)
+        src/Util.h
+        src/reimu.h
+        tests/test_timer.cpp
+        )

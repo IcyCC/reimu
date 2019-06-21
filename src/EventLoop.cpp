@@ -10,25 +10,47 @@ namespace reimu {
 
     class DefaultEventLoopImp : public EventLoopImpAbc {
     public:
-        // 任务相关
-        TaskPtr CreateTask(const TaskCallBack &cb, const TaskCallBack &succ_cb = nullptr) final;
+        DefaultEventLoopImp(EventLoop *loop) {
+            _loop = loop;
+        }
 
     public:
-        TimerPtr CallAt(const TaskCallBack &cb, time_t at) final;
-        TimerPtr CallLater(const TaskCallBack &cb, time_t t) final;
-        TimerPtr CallRepeat(const TaskCallBack &cb, time_t r) final;
+        // 任务相关
+        TaskPtr CreateTask(const TaskCallBack &cb, const TaskCallBack &succ_cb = nullptr) override;
+
+    public:
+        TimerPtr CallAt(const TaskCallBack &cb, time_t at) override;
+
+        TimerPtr CallLater(const TaskCallBack &cb, time_t t) override;
+
+        TimerPtr CallRepeat(const TaskCallBack &cb, time_t r) override;
+
+        void loopTimer() override;
+
+        void loopIO() override;
+
+        int CancelTimer(Timer *t) final;
+
 
     private:
         std::map<int, TaskPtr> _tasks;
 
-        typedef std::pair<time_t, int> TImerKey;
-        std::map<TImerKey, TimerPtr> _timers;
+        typedef std::pair<time_t, int> TimerKey;
+
+        class TimerKeyCompare {
+        public:
+            bool operator()(const TimerKey &t1, const TimerKey &t2) const {
+                return t1.first > t2.first;
+            }
+        };
+
+        std::map<TimerKey, TimerPtr, TimerKeyCompare> _timers;
     };
 
 
     TaskPtr
     DefaultEventLoopImp::CreateTask(const reimu::TaskCallBack &cb, const reimu::TaskCallBack &succ_cb) {
-        auto t = std::make_shared<Task>(cb, succ_cb);
+        auto t = std::make_shared<Task>(this->_loop, cb, succ_cb);
         int task_id = 1;
         t->SetStatus(Task::TaskStatus::PENDING);
         t->SetId(task_id);
@@ -37,29 +59,60 @@ namespace reimu {
     }
 
     TimerPtr DefaultEventLoopImp::CallAt(const reimu::TaskCallBack &cb, time_t at) {
-        auto t = std::make_shared<Timer>(cb, at, -1);
+        auto t = std::make_shared<Timer>(this->_loop, cb, at, -1);
         int timer_id = 1;
         t->SetId(timer_id);
         _timers.insert(std::make_pair(std::make_pair(at, timer_id), t));
-        return  t;
+        return t;
     }
 
     TimerPtr DefaultEventLoopImp::CallLater(const reimu::TaskCallBack &cb, time_t t) {
-        time_t  at = util::TimeMicro() + t;
+        time_t at = util::TimeMilli() + t;
         return CallAt(cb, at);
     }
 
     TimerPtr DefaultEventLoopImp::CallRepeat(const reimu::TaskCallBack &cb, time_t r) {
-        time_t  at = util::TimeMicro() + r;
-        auto t = std::make_shared<Timer>(cb, at, r);
+        time_t at = util::TimeMilli() + r;
+        auto t = std::make_shared<Timer>(this->_loop, cb, at, r);
         int timer_id = 1;
         t->SetId(timer_id);
         _timers.insert(std::make_pair(std::make_pair(at, timer_id), t));
-        return  t;
+        return t;
+    }
+
+    int DefaultEventLoopImp::CancelTimer(reimu::Timer *t) {
+        if (t->GetStatus() == Task::TaskStatus::PENDING) {
+            t->SetStatus(Task::TaskStatus::CANCEL);
+            _timers.erase(std::make_pair(t->GetRunAt(), t->GetId()));
+            return 1;
+        }
+        return 0;
+    }
+
+    void DefaultEventLoopImp::loopTimer() {
+        time_t current_time = util::TimeMilli();
+        auto it = _timers.upper_bound(std::make_pair(current_time, 0));
+        while (it != _timers.end()) {
+            it->second->_cb();
+            if (it->second->GetRepeat() > 0) {
+                // 重复任务
+                auto t = std::make_shared<Timer>(_loop, it->second->_cb, current_time + it->second->GetRepeat(),
+                                                 it->second->GetRepeat());
+                t->SetId(it->second->GetId());
+                _timers.insert(
+                        std::make_pair(std::make_pair(t->GetRunAt(), it->second->GetId()), t)
+                );
+            }
+            _timers.erase(it++);
+        }
+    }
+
+    void DefaultEventLoopImp::loopIO() {
+        return;
     }
 
     EventLoop::EventLoop() {
-        _imp = std::make_unique<DefaultEventLoopImp>();
+        _imp = std::make_unique<DefaultEventLoopImp>(this);
     }
 
     TaskPtr EventLoop::CreateTask(const reimu::TaskCallBack &cb, const reimu::TaskCallBack &succ_cb) {
@@ -77,4 +130,16 @@ namespace reimu {
     TimerPtr EventLoop::CallRepeat(const reimu::TaskCallBack &cb, time_t r) {
         return _imp->CallRepeat(cb, r);
     }
+
+    int EventLoop::CancelTimer(reimu::Timer *t) {
+        return _imp->CancelTimer(t);
+    }
+
+    void EventLoop::Loop() {
+        while (true) {
+            _imp->LoopOnce();
+        }
+    }
+
+
 }
