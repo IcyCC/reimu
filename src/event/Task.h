@@ -5,7 +5,7 @@
 #ifndef REIMU_TASK_H
 #define REIMU_TASK_H
 
-#include "reimu_imp.h"
+#include "../reimu_imp.h"
 
 namespace reimu {
     // 任务对象 表达一个异步的任务， 可以添加回调

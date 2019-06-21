@@ -5,8 +5,8 @@
 #ifndef REIMU_EVENTLOOP_H
 #define REIMU_EVENTLOOP_H
 
-#include "reimu_imp.h"
-#include "ThreadingPool.h"
+#include "../reimu_imp.h"
+#include "../thead/ThreadingPool.h"
 #include "Task.h"
 
 namespace reimu {

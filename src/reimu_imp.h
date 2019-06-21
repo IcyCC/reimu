@@ -20,13 +20,16 @@
 #include <atomic>
 #include <condition_variable>
 #include "Util.h"
-#include "SafeCounter.h"
+#include <arpa/inet.h>
+#include "thead/SafeCounter.h"
 
 namespace reimu {
     class EventLoop;
 
     class Task;
     class Timer;
+
+    class Channel;
 
     typedef std::function<void()> TaskCallBack;
     typedef std::shared_ptr<Task> TaskPtr;
