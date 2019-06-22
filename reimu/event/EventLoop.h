@@ -8,18 +8,19 @@
 #include "../reimu_imp.h"
 #include "../thead/ThreadingPool.h"
 #include "Task.h"
+#include "../poller/Poller.h"
 
 namespace reimu {
 
 
-
-
     class EventLoopImpAbc : public noncopyable {
     public:
-        EventLoop * _loop;
+        EventLoop *_loop;
+        std::unique_ptr<Poller> _poller;
     public:
         // 任务相关接口 创建一个任务
         virtual TaskPtr CreateTask(const TaskCallBack &cb) = 0;
+
         virtual void CallInThreading(TaskPtr task) = 0;
 
     public:
@@ -41,6 +42,25 @@ namespace reimu {
             loopTimer();
             loopIO();
         }
+
+    public:
+        virtual Poller *GetPoller() = 0;
+
+        virtual void SetPoller(Poller *p) = 0;
+
+        // Poller 相关
+        virtual void AddChannel(Channel* ch) {
+            _poller->AddChannel(ch);
+        };
+
+        virtual void RemoveChannel(Channel* ch) {
+            _poller->RemoveChannel(ch);
+        };
+
+        virtual void UpdateChannel(Channel* ch) {
+            _poller->UpdateChannel(ch);
+        };
+
     };
 
 
@@ -63,18 +83,29 @@ namespace reimu {
 
         int CancelTimer(Timer *t);
 
+    public:
+        // Loop相关
+
         void Loop();
 
         void CallInThreading(TaskPtr task);
 
+    public:
+
+        // poller 相关
+        Poller *GetPoller();
+
+        void SetPoller(Poller *p);
+
+        void AddChannel(Channel * ch);
+
+        void RemoveChannel(Channel * ch);
+
+        void UpdateChannel(Channel* ch);
 
     private:
         std::unique_ptr<EventLoopImpAbc> _imp;
     };
-
-
-
-
 
 
 }

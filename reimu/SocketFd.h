@@ -17,7 +17,7 @@ namespace reimu {
         IPv4Addr(const struct sockaddr_in &addr) : addr_(addr) {};
     };
 
-    class Socket {
+    class Socket : public noncopyable{
     public:
         int _fd;
     public:

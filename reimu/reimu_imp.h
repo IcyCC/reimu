@@ -24,16 +24,21 @@
 #include "thead/SafeCounter.h"
 
 namespace reimu {
+    class Poller;
+    class Channel;
     class EventLoop;
+
+    class Socket;
 
     class Task;
     class Timer;
 
-    class Channel;
-
+    typedef std::shared_ptr<Channel> ChannelPrt;
+    typedef std::vector<Channel*> ChannelList;
     typedef std::function<void()> TaskCallBack;
     typedef std::shared_ptr<Task> TaskPtr;
     typedef std::shared_ptr<Timer> TimerPtr;
+    typedef std::shared_ptr<Socket> SocketPtr;
 
     class ThreadingPool;
 

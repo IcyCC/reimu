@@ -5,24 +5,24 @@
 #ifndef REIMU_SAFECOUNTER_H
 #define REIMU_SAFECOUNTER_H
 
-#include "reimu_imp.h"
+#include "../reimu_imp.h"
 
 namespace reimu {
     // 线程安全计数器
     class SafeCounter {
 
     private:
-        std::atomic<int> _value;
+        std::atomic<long> _value;
     public:
         SafeCounter() {
             _value = 1;
         }
     public:
-        int Add(){
+        long Add(){
             return _value++;
         };
 
-        int Read(){
+        long Read(){
             return _value;
         }
     };

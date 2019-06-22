@@ -3,6 +3,7 @@
 //
 
 #include "EventLoop.h"
+#include "../Channel.h"
 
 
 namespace reimu {
@@ -10,7 +11,7 @@ namespace reimu {
 
     class DefaultEventLoopImp : public EventLoopImpAbc {
     public:
-        DefaultEventLoopImp(EventLoop *loop)  {
+        DefaultEventLoopImp(EventLoop *loop) {
             _loop = loop;
             _threading_pool = std::make_shared<ThreadingPool>(5, -1);
             _threading_pool->Start();
@@ -35,15 +36,21 @@ namespace reimu {
 
         int CancelTimer(Timer *t) final;
 
+        Poller *GetPoller() override;
+
+        void SetPoller(Poller *p) override;
+
 
     private:
         typedef std::pair<time_t, int> TimerKey;
+
         class TimerKeyCompare {
         public:
             bool operator()(const TimerKey &t1, const TimerKey &t2) const {
                 return t1.first > t2.first;
             }
         };
+
         std::map<TimerKey, TimerPtr, TimerKeyCompare> _timers;
 
         std::shared_ptr<ThreadingPool> _threading_pool;
@@ -113,8 +120,35 @@ namespace reimu {
     }
 
     void DefaultEventLoopImp::loopIO() {
-        return;
+        if (_poller == nullptr) {
+            return;
+        } else {
+            ChannelList activeChannels;
+            _poller->Poll(-1, activeChannels);
+            for (auto &c : activeChannels) {
+                if (c->GetEvents() & _poller->REIMU_POLLIN) {
+                    c->HandleRead();
+                }
+
+                if (c->GetEvents() & _poller->REIMU_POLLOUT) {
+                    c->HandleWrite();
+                }
+
+                if (c->GetEvents() & _poller->REIMU_POLLERR) {
+                    c->HandleError();
+                }
+            }
+        }
     }
+
+    Poller *DefaultEventLoopImp::GetPoller() {
+        return _poller.get();
+    }
+
+    void DefaultEventLoopImp::SetPoller(reimu::Poller *p) {
+        _poller.reset(p);
+    }
+
 
     EventLoop::EventLoop() {
         _imp = std::make_unique<DefaultEventLoopImp>(this);
@@ -150,7 +184,28 @@ namespace reimu {
         return _imp->CallInThreading(task);
     }
 
-    int Timer::Cancel(){
+    void EventLoop::SetPoller(reimu::Poller *p) {
+        return _imp->SetPoller(p);
+    }
+
+    void EventLoop::AddChannel(Channel* ch) {
+        return _imp->AddChannel(ch);
+    };
+
+    void EventLoop::RemoveChannel(Channel* ch) {
+        return _imp->RemoveChannel(ch);
+    };
+
+    void EventLoop::UpdateChannel(Channel* ch){
+        return _imp->UpdateChannel(ch);
+    };
+
+
+    Poller *EventLoop::GetPoller() {
+        return _imp->GetPoller();
+    }
+
+    int Timer::Cancel() {
         return this->_loop->CancelTimer(this);
     }
 
