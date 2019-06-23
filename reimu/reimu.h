@@ -6,5 +6,8 @@
 #define REIMU_REIMU_H
 
 #include "event/EventLoop.h"
+#include "Buffer.h"
+#include "Slice.h"
+#include "Codec.h"
 
 #endif //REIMU_REIMU_H

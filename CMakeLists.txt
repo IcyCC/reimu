@@ -25,6 +25,13 @@ add_executable(reimu
         reimu/poller/PPoller.cpp
         reimu/poller/PPoller.h
 
+        reimu/Slice.h
+        reimu/Codec.cpp
+        reimu/Codec.h
+        reimu/Buffer.cpp
+        reimu/Buffer.h
+        reimu/TcpConn.cpp
+        reimu/TcpConn.h
         #tests/test_timer.cpp
-        tests/test_threading.cpp
-        )
+#        tests/test_threading.cpp
+        tests/test_buffer_slice.cpp)
