@@ -33,5 +33,6 @@ add_executable(reimu
         reimu/TcpConn.cpp
         reimu/TcpConn.h
         #tests/test_timer.cpp
-#        tests/test_threading.cpp
-        tests/test_buffer_slice.cpp)
+        tests/test_threading.cpp
+#        tests/test_buffer_slice.cpp
+        )

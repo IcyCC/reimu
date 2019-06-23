@@ -19,9 +19,5 @@ int main() {
 
     std::cout << "t2 "<<t2->GetId() << std::endl;
 
-
-    loop.CallInThreading(t2);
-    loop.CallInThreading(t1);
-
     loop.Loop();
 }

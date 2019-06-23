@@ -63,6 +63,7 @@ namespace reimu {
         int task_id = REIMU_GLOBAL_COUNTER.Add();
         t->SetStatus(Task::TaskStatus::PENDING);
         t->SetId(task_id);
+        CallInThreading(t);
         return t;
     }
 
@@ -126,17 +127,18 @@ namespace reimu {
             ChannelList activeChannels;
             _poller->Poll(-1, activeChannels);
             for (auto &c : activeChannels) {
-                if (c->GetEvents() & _poller->REIMU_POLLIN) {
-                    c->HandleRead();
-                }
-
-                if (c->GetEvents() & _poller->REIMU_POLLOUT) {
-                    c->HandleWrite();
-                }
-
-                if (c->GetEvents() & _poller->REIMU_POLLERR) {
-                    c->HandleError();
-                }
+                // 并发处理
+                CreateTask([&](){
+                    if (c->GetEvents() & _poller->REIMU_POLLIN) {
+                        c->HandleRead();
+                    }
+                    if (c->GetEvents() & _poller->REIMU_POLLOUT) {
+                        c->HandleWrite();
+                    }
+                    if (c->GetEvents() & _poller->REIMU_POLLERR) {
+                        c->HandleError();
+                    }
+                });
             }
         }
     }

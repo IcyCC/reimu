@@ -24,23 +24,28 @@
 #include "Slice.h"
 #include "thead/SafeCounter.h"
 #include "Codec.h"
+#include "SocketFd.h"
 
 namespace reimu {
     class Poller;
     class Channel;
     class EventLoop;
-
-    class Socket;
-
     class Task;
     class Timer;
+    class TcpConn;
+
 
     typedef std::shared_ptr<Channel> ChannelPrt;
     typedef std::vector<Channel*> ChannelList;
     typedef std::function<void()> TaskCallBack;
+
     typedef std::shared_ptr<Task> TaskPtr;
     typedef std::shared_ptr<Timer> TimerPtr;
     typedef std::shared_ptr<Socket> SocketPtr;
+    typedef std::shared_ptr<TcpConn> TcpConnPtr;
+
+    typedef std::function<void(TcpConnPtr, Slice)> TcpMsgCallBack;
+    typedef std::function<void(TcpConnPtr)> TcpCallBack;
 
     class ThreadingPool;
 
