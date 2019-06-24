@@ -26,6 +26,7 @@
 #include "Codec.h"
 #include "SocketFd.h"
 
+
 namespace reimu {
     class Poller;
     class Channel;
@@ -33,6 +34,7 @@ namespace reimu {
     class Task;
     class Timer;
     class TcpConn;
+    class Socket;
 
 
     typedef std::shared_ptr<Channel> ChannelPrt;

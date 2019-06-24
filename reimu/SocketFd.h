@@ -32,9 +32,13 @@ namespace reimu {
         }
 
         Socket() {
-            _fd = socket(AF_INET, SOCK_STREAM | SO_KEEPALIVE | SO_REUSEPORT, 0);
+            _fd = socket(AF_INET, SOCK_STREAM , 0);
+            if (_fd == -1) {
+                perror(strerror(errno));
+            }
             int flags = fcntl(_fd, F_GETFL, 0);
             fcntl(_fd, F_SETFL, flags | O_NONBLOCK | O_CLOEXEC);
+            SetReuseAddr(true);
         }
 
         ~Socket() {

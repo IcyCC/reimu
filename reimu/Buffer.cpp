@@ -7,6 +7,7 @@
 
 namespace reimu {
     Slice Buffer::Read(size_t n) {
+        std::lock_guard<std::mutex> lock(_mutex);
         if (_read_idx + n >= _write_idx) {
             auto s = Slice(&*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
             _read_idx = _write_idx;
@@ -18,8 +19,9 @@ namespace reimu {
         }
     }
 
-    Buffer& Buffer::Write(const char *s) {
-        size_t size = strlen(s);
+    Buffer& Buffer::Write(const std::string & s) {
+        std::lock_guard<std::mutex> lock(_mutex);
+        size_t size = s.size();
         int flag = 0;
         while (flag < size){
             _v.push_back(s[flag]);
@@ -35,6 +37,7 @@ namespace reimu {
     }
 
     long Buffer::prepend() {
+        std::lock_guard<std::mutex> lock(_mutex);
         long old_read_idx = _read_idx;
         _v.erase(_v.begin(), _v.begin() + _read_idx);
         _read_idx = 0;
@@ -43,6 +46,7 @@ namespace reimu {
     }
 
     Slice Buffer::ReadAll() {
+        std::lock_guard<std::mutex> lock(_mutex);
         auto s = Slice(&*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
         _read_idx = _write_idx;
         return s;

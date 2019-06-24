@@ -3,9 +3,9 @@
 //
 
 #include "EventLoop.h"
-#include "../Channel.h"
-
-
+#include "../poller/Poller.h"
+#include "../thead/ThreadingPool.h"
+#include "Task.h"
 namespace reimu {
 
 
@@ -15,6 +15,7 @@ namespace reimu {
             _loop = loop;
             _threading_pool = std::make_shared<ThreadingPool>(5, -1);
             _threading_pool->Start();
+            _poller = std::make_unique<Poller>();
         }
 
     public:
@@ -125,20 +126,17 @@ namespace reimu {
             return;
         } else {
             ChannelList activeChannels;
-            _poller->Poll(-1, activeChannels);
+            _poller->Poll(0, activeChannels);
             for (auto &c : activeChannels) {
                 // 并发处理
-                CreateTask([&](){
-                    if (c->GetEvents() & _poller->REIMU_POLLIN) {
-                        c->HandleRead();
-                    }
-                    if (c->GetEvents() & _poller->REIMU_POLLOUT) {
-                        c->HandleWrite();
-                    }
-                    if (c->GetEvents() & _poller->REIMU_POLLERR) {
-                        c->HandleError();
-                    }
-                });
+                if (c->GetEvents() & (_poller->REIMU_POLLIN | _poller->REIMU_POLLERR)) {
+                    c->HandleRead();
+                }
+                if (c->GetEvents() & (_poller->REIMU_POLLOUT)) {
+                    c->HandleWrite();
+                } else {
+                    // 异常的事件
+                }
             }
         }
     }
@@ -190,15 +188,15 @@ namespace reimu {
         return _imp->SetPoller(p);
     }
 
-    void EventLoop::AddChannel(Channel* ch) {
+    void EventLoop::AddChannel(Channel *ch) {
         return _imp->AddChannel(ch);
     };
 
-    void EventLoop::RemoveChannel(Channel* ch) {
+    void EventLoop::RemoveChannel(Channel *ch) {
         return _imp->RemoveChannel(ch);
     };
 
-    void EventLoop::UpdateChannel(Channel* ch){
+    void EventLoop::UpdateChannel(Channel *ch) {
         return _imp->UpdateChannel(ch);
     };
 

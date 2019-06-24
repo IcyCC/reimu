@@ -6,9 +6,10 @@
 #define REIMU_EVENTLOOP_H
 
 #include "../reimu_imp.h"
-#include "../thead/ThreadingPool.h"
-#include "Task.h"
 #include "../poller/Poller.h"
+#include "../Channel.h"
+
+
 
 namespace reimu {
 

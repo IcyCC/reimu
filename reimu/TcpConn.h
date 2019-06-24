@@ -9,7 +9,18 @@
 
 namespace reimu {
     class TcpConn : public std::enable_shared_from_this<TcpConn>, private noncopyable {
+    public:
+        enum TcpConnState {
+            IDLE,
+            SHAKEHANDS,
+            CONNECTED,
+            CLOSED,
+            ERROR
+        };
     private:
+
+        const size_t READ_BUFFER_SIZE = 1024;
+
         std::unique_ptr<Channel> _channel;
         std::unique_ptr<CodecBase> _codec;
         EventLoop *_loop;
@@ -17,11 +28,32 @@ namespace reimu {
         TcpMsgCallBack _msg_cb;
         Buffer _input_buf, _output_buf; // 读写缓存
         int _timeout;
-    public:
-        TcpConn(EventLoop *loop, int timeout) : _loop(loop), _timeout(timeout) {};
+        TcpConnState _state;
+        IPv4Addr _dest_addr;
 
-        TcpConn(EventLoop *loop, int timeout, int fd) : TcpConn(loop, timeout) {
+        std::mutex _mutex;
+    public:
+        TcpConn(EventLoop *loop, int timeout) : _loop(loop), _timeout(timeout) {
+            _channel = std::make_unique<Channel>(_loop);
+            _state = TcpConnState::IDLE;
+            _codec = std::make_unique<LineCodec>();
+            initChannel();
+        };
+
+        TcpConn(EventLoop *loop, int timeout, int fd) : _loop(loop), _timeout(timeout) {
             _channel = std::make_unique<Channel>(_loop, fd);
+            _state = TcpConnState::IDLE;
+            _codec = std::make_unique<LineCodec>();
+        }
+
+        ~TcpConn();
+
+        EventLoop *GetEventLoop() {
+            return _loop;
+        }
+
+        void SetCodec(CodecBase* codec) {
+            _codec.reset(codec);
         }
 
     public:
@@ -35,17 +67,31 @@ namespace reimu {
         void Connect(const std::string &host, unsigned short port) {
             Connect(IPv4Addr(host, port));
         }
+
         void Reconnect();
-        int Send(const std::string &s);
+
+        void Close();
+
+        void CleanUp();
+
+        void Send(const std::string &s);
 
     public:
         void handleWrite();
+
         void handleRead();
-        void handleConnect();
-        void handleDisconnect();
+
+
         void handleTimeout();
 
-        void clean();
+        void initChannel();
+
+        size_t bSend(); // 阻塞发送完buffer所有数据
+
+        size_t readImp(int fd, void *buf, size_t bytes) { return ::read(fd, buf, bytes); };
+
+        size_t writeImp(int fd, const void *buf, size_t bytes) { return ::write(fd, buf, bytes); };
+
     };
 }
 

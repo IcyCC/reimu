@@ -5,9 +5,10 @@
 #ifndef REIMU_REIMU_H
 #define REIMU_REIMU_H
 
-#include "event/EventLoop.h"
 #include "Buffer.h"
 #include "Slice.h"
 #include "Codec.h"
+#include "TcpConn.h"
+#include "event/EventLoop.h"
 
 #endif //REIMU_REIMU_H

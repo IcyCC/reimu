@@ -9,7 +9,7 @@
 #include "reimu_imp.h"
 
 namespace reimu {
-    class CodecBase {
+    struct CodecBase {
         virtual Slice tryDecode(const Slice& data) = 0;
         virtual void encode(Slice msg, Buffer &buf) = 0;
         virtual CodecBase *clone() = 0;
