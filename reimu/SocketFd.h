@@ -48,37 +48,19 @@ namespace reimu {
         int fd() const { return _fd; }
 
     public:
-        /// abort if address in use
         void BindAddress(const IPv4Addr& localaddr);
-        /// abort if address in use
         void Listen();
 
-        /// On success, returns a non-negative integer that is
-        /// a descriptor for the accepted socket, which has been
-        /// set to non-blocking and close-on-exec. *peeraddr is assigned.
-        /// On error, -1 is returned, and *peeraddr is untouched.
         int Accept(IPv4Addr* peeraddr);
 
         void ShutdownWrite();
 
-        ///
-        /// Enable/disable TCP_NODELAY (disable/enable Nagle's algorithm).
-        ///
         void SetTcpNoDelay(bool on);
 
-        ///
-        /// Enable/disable SO_REUSEADDR
-        ///
         void SetReuseAddr(bool on);
 
-        ///
-        /// Enable/disable SO_REUSEPORT
-        ///
         void SetReusePort(bool on);
 
-        ///
-        /// Enable/disable SO_KEEPALIVE
-        ///
         void SetKeepAlive(bool on);
 
     };

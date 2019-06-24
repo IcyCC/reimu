@@ -9,7 +9,6 @@
 namespace reimu {
 
     TcpConn::~TcpConn() {
-        CleanUp();
     }
 
     void TcpConn::Connect(const reimu::IPv4Addr &addr) {
@@ -112,8 +111,10 @@ namespace reimu {
     void TcpConn::handleWrite() {
         if (_state == TcpConnState::CONNECTED ){
             auto s = _output_buf.ToSlice();
-            size_t sended = writeImp(_channel->Fd(), s.data(), s.size());
-            _output_buf.Consume(sended);
+            if (!s.empty()){
+                size_t sended = writeImp(_channel->Fd(), s.data(), s.size());
+                _output_buf.Consume(sended);
+            }
         } else if (_state == TcpConnState::SHAKEHANDS) {
             _state = TcpConnState::CONNECTED;
             auto conn = shared_from_this();
@@ -132,5 +133,10 @@ namespace reimu {
 
     void TcpConn::CleanUp() {
         this->_channel.reset(nullptr);
+    }
+
+    void TcpConn::AttachChannel(reimu::Channel *channel) {
+        _channel.reset(channel);
+        initChannel();
     }
 }

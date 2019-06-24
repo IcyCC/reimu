@@ -13,7 +13,7 @@ namespace reimu {
 
     class Channel : public noncopyable {
     private:
-        std::unique_ptr<Socket> _socket;
+        SocketPtr _socket;
         EventLoop *_loop;
         short _listen_events;
         short _events;
@@ -56,10 +56,11 @@ namespace reimu {
             return _socket->fd();
         }
 
+        Socket* GetSocket() {
+            return  _socket.get();
+        }
 
         void update();
-
-
     public:
 
         // 用户注册事件的接口
@@ -90,6 +91,10 @@ namespace reimu {
 
 
         void EnableWriteEvent(bool e);
+
+        void AttachSocket(SocketPtr socket);
+
+        void CleanUp();
 
     };
 }

@@ -76,6 +76,8 @@ namespace reimu {
 
         void Send(const std::string &s);
 
+        void AttachChannel(Channel * channel);
+
     public:
         void handleWrite();
 
@@ -91,6 +93,7 @@ namespace reimu {
         size_t readImp(int fd, void *buf, size_t bytes) { return ::read(fd, buf, bytes); };
 
         size_t writeImp(int fd, const void *buf, size_t bytes) { return ::write(fd, buf, bytes); };
+
 
     };
 }

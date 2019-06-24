@@ -35,4 +35,4 @@ add_executable(reimu
         #tests/test_timer.cpp
        # tests/test_threading.cpp
 #        tests/test_buffer_slice.cpp
-        tests/test_conn.cpp)
+        tests/test_conn.cpp reimu/Acceptor.cpp reimu/Acceptor.h)

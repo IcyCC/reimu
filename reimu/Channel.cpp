@@ -9,21 +9,20 @@
 namespace reimu  {
     Channel::Channel(reimu::EventLoop *loop, int fd) {
         _loop = loop;
-        _socket = std::make_unique<Socket>(fd, DeafultLocaAddr);
+        _socket = std::make_shared<Socket>(fd, DeafultLocaAddr);
         _events = 0;
         _read_cb = _write_cb = nullptr;
     }
 
     Channel::Channel(reimu::EventLoop *loop) {
         _loop = loop;
-        _socket = std::make_unique<Socket>();
+        _socket = std::make_shared<Socket>();
         _events = 0;
         _read_cb = _write_cb = nullptr;
     }
 
     Channel::~Channel() {
         Close();
-        _loop->RemoveChannel(this);
     }
 
     void Channel::update() {
@@ -33,7 +32,7 @@ namespace reimu  {
     void Channel::Close() {
         _listen_events = 0;
         _socket->ShutdownWrite();
-        update();
+        _loop->RemoveChannel(this);
     }
 
     void Channel::EnableReadEvent(bool e) {
@@ -55,4 +54,16 @@ namespace reimu  {
         }
         update();
     }
+
+    void Channel::AttachSocket(SocketPtr socket) {
+        this->_loop->RemoveChannel(this);
+        _socket.swap(socket);
+        this->_loop->AddChannel(this);
+    }
+
+    void Channel::CleanUp() {
+        Close();
+        _socket.reset();
+    }
+
 }
