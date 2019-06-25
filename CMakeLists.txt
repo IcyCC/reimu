@@ -40,4 +40,4 @@ add_executable(reimu
         # tests/test_threading.cpp
          #tests/test_buffer_slice.cpp
         #tests/test_conn.cpp
-        )
+        reimu/log/Logging.cpp reimu/log/Logging.h)

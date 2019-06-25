@@ -14,9 +14,11 @@ namespace reimu {
     public:
         static const int wait_infinite = std::numeric_limits<int>::max(); //  最大等待时间
 
-        SafeQueue(size_t capacity = 0) : capacity_(capacity), exit_(false) {}
+        SafeQueue() : exit_(false) {}
 
         bool Push(T && v);
+
+        bool Push(const T &v);
 
         T PopWait(int waitMs = wait_infinite);
 
@@ -28,7 +30,6 @@ namespace reimu {
     private:
         std::list<T> items_;
         std::condition_variable ready_;
-        size_t capacity_;
         std::atomic<bool> exit_;
         void waitReady(std::unique_lock<std::mutex> &lk, int waitMs);
     };
@@ -50,11 +51,17 @@ namespace reimu {
 
     template <typename T>
     bool SafeQueue<T>::Push(T &&v) {
+        Push(std::move(v));
+        return true;
+    }
+
+    template <typename T>
+    bool SafeQueue<T>::Push(const T &v) {
         std::lock_guard<std::mutex> lk(*this);
-        if(exit_ || (capacity_ && items_.size() >- capacity_)) {
+        if(exit_ ) {
             return false;
         }
-        items_.push_back(std::move(v));
+        items_.push_back(v);
         ready_.notify_one();
         return true;
     }

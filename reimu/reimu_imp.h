@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <sys/fcntl.h>
 #include <cstdio>
+#include <iostream>
 #include <unistd.h>
 #include <string>
 #include <vector>
@@ -22,6 +23,7 @@
 #include "Util.h"
 #include <arpa/inet.h>
 #include "thead/SafeCounter.h"
+#include "thead/SafeQueue.h"
 #include "Codec.h"
 #include "SocketFd.h"
 
