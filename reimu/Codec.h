@@ -10,16 +10,16 @@
 
 namespace reimu {
     struct CodecBase {
-        virtual Slice tryDecode(const Slice& data) = 0;
-        virtual void encode(Slice msg, Buffer &buf) = 0;
+        virtual Slice tryDecode(Slice data) = 0;
+        virtual void encode(Slice msg, BufferPtr buf) = 0;
         virtual CodecBase *clone() = 0;
     };
 
     //以\r\n结尾的消息
     struct LineCodec : public CodecBase {
-        Slice tryDecode(const Slice& data) override;
+        Slice tryDecode(Slice data) override;
 
-        void encode(Slice msg, Buffer &buf) override;
+        void encode(Slice msg, BufferPtr buf) override;
 
         CodecBase *clone() override { return new LineCodec(); }
     };

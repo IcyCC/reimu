@@ -26,7 +26,7 @@ namespace reimu {
         EventLoop *_loop;
         TcpCallBack _connected_cb, _disconnected_cb, _timeout_cb;
         TcpMsgCallBack _msg_cb;
-        Buffer _input_buf, _output_buf; // 读写缓存
+        BufferPtr _input_buf, _output_buf; // 读写缓存
         int _timeout;
         TcpConnState _state;
         IPv4Addr _dest_addr;
@@ -37,12 +37,16 @@ namespace reimu {
             _channel = std::make_unique<Channel>(_loop);
             _state = TcpConnState::IDLE;
             _codec = std::make_unique<LineCodec>();
+            _input_buf = std::make_shared<Buffer>();
+            _output_buf = std::make_shared<Buffer>();
             initChannel();
         };
 
         TcpConn(EventLoop *loop, int timeout, SocketPtr socket) : _loop(loop), _timeout(timeout) {
             _channel = std::make_unique<Channel>(_loop, socket);
             _state = TcpConnState::IDLE;
+            _input_buf = std::make_shared<Buffer>();
+            _output_buf = std::make_shared<Buffer>();
             _codec = std::make_unique<LineCodec>();
             initChannel();
         }

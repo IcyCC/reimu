@@ -25,7 +25,6 @@ add_executable(reimu
         reimu/poller/PPoller.cpp
         reimu/poller/PPoller.h
 
-        reimu/Slice.h
         reimu/Codec.cpp
         reimu/Codec.h
         reimu/Buffer.cpp
@@ -39,6 +38,6 @@ add_executable(reimu
         tests/test_server.cpp
         #tests/test_timer.cpp
         # tests/test_threading.cpp
-        # tests/test_buffer_slice.cpp
-        # tests/test_conn.cpp
+         #tests/test_buffer_slice.cpp
+        #tests/test_conn.cpp
         )

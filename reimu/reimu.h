@@ -6,7 +6,6 @@
 #define REIMU_REIMU_H
 
 #include "Buffer.h"
-#include "Slice.h"
 #include "Codec.h"
 #include "TcpConn.h"
 #include "event/EventLoop.h"

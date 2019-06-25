@@ -5,11 +5,11 @@
 #include "Codec.h"
 
 namespace reimu {
-    void LineCodec::encode(reimu::Slice msg, reimu::Buffer &buf) {
-        buf.Write(msg.data()).Write("\r\n");
+    void LineCodec::encode(reimu::Slice msg, reimu::BufferPtr buf) {
+        buf->Write(msg.data()).Write("\r\n");
     }
 
-    Slice LineCodec::tryDecode(const reimu::Slice& data) {
+    Slice LineCodec::tryDecode(reimu::Slice data) {
         auto msg =Slice();
         if (data.size() == 1 && data[0] == 0x04) {
             return msg;
@@ -17,7 +17,7 @@ namespace reimu {
         for (size_t i = 0; i < data.size(); i++) {
             if (data[i] == '\n'){
                 if (i > 0 && data[i-1] == '\r') {
-                    return Slice(data.data(), i+1);
+                    return Slice(data.GetBuffer(),data.data(), i+1);
                 }
             }
         }

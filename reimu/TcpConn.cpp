@@ -40,11 +40,11 @@ namespace reimu {
 
     size_t TcpConn::bSend() {
         size_t sended = 0;
-        auto s = _output_buf.ToSlice();
+        auto s = _output_buf->ToSlice();
         while (sended < s.size()) {
-            auto sended_s = _output_buf.ToSlice();
+            auto sended_s = _output_buf->ToSlice();
             size_t t = write(_channel->Fd(), s.data(), s.size());
-            _output_buf.Consume(t);
+            _output_buf->Consume(t);
             sended = sended + t;
         }
         return sended;
@@ -70,6 +70,7 @@ namespace reimu {
         auto conn = shared_from_this();
         while (_state == TcpConn::CONNECTED) {
             char buffer[READ_BUFFER_SIZE];
+            bzero(buffer, READ_BUFFER_SIZE);
             size_t n = readImp(_channel->Fd(), buffer, sizeof(buffer));
             if (n <= 0) {
                 // 处理错误
@@ -87,18 +88,18 @@ namespace reimu {
                     break;
                 }
             } else {
-                _input_buf.Write(buffer);
+                _input_buf->Write(buffer);
             }
 
             while (true){
-                auto s = _input_buf.ToSlice();
+                auto s = _input_buf->ToSlice();
                 auto msg =_codec->tryDecode(s);
                 if (!msg.empty()){
                     // 解析到数据 调用回调并且尝试再次解析
                     _loop->CreateTask([this, msg,conn](){
                         this->_msg_cb(conn, msg);
                     });
-                    _input_buf.Consume(msg.size());
+                    _input_buf->Consume(msg.size());
                     continue;
                 } else {
                     return;
@@ -110,10 +111,10 @@ namespace reimu {
 
     void TcpConn::handleWrite() {
         if (_state == TcpConnState::CONNECTED ){
-            auto s = _output_buf.ToSlice();
+            auto s = _output_buf->ToSlice();
             if (!s.empty()){
                 size_t sended = writeImp(_channel->Fd(), s.data(), s.size());
-                _output_buf.Consume(sended);
+                _output_buf->Consume(sended);
             }
         } else if (_state == TcpConnState::SHAKEHANDS) {
             _state = TcpConnState::CONNECTED;

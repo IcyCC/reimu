@@ -18,6 +18,7 @@ int main() {
     s->OnConnMsg([](reimu::TcpConnPtr conn, reimu::Slice s) {
 
         std::cout << "收到消息" << s.toString() << std::endl;
+        conn->Send("hello");
     });
 
     s->OnConnDisconnected([](reimu::TcpConnPtr conn) {

@@ -21,7 +21,6 @@
 #include <condition_variable>
 #include "Util.h"
 #include <arpa/inet.h>
-#include "Slice.h"
 #include "thead/SafeCounter.h"
 #include "Codec.h"
 #include "SocketFd.h"
