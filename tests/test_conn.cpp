@@ -7,7 +7,7 @@
 #include <memory>
 
 int main() {
-    auto loop = reimu::EventLoop();
+    auto loop = reimu::EventLoop::GetInstance();
 
     auto c = std::make_shared<reimu::TcpConn>(&loop, 10);
 
@@ -23,5 +23,6 @@ int main() {
 
     c->Connect("0.0.0.0", 10010);
 
-    loop.Loop();
+
+    loop->Loop();
 }

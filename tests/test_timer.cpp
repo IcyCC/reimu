@@ -6,17 +6,17 @@
 #include <iostream>
 
 int main() {
-    auto loop = reimu::EventLoop();
+    auto loop = reimu::EventLoop::GetInstance();
 
-    auto t1 = loop.CallLater([]() {
+    auto t1 = loop->CallLater([]() {
         std::cout << "task 1" << std::endl;
     }, 5000);
 
-    auto t2 = loop.CallLater([]() {
+    auto t2 = loop->CallLater([]() {
         std::cout << "task 2" << std::endl;
     }, 1000);
 
-    auto t3 = loop.CallRepeat([]() {
+    auto t3 = loop->CallRepeat([]() {
         std::cout << "task 3" << std::endl;
     }, 2000);
 

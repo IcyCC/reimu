@@ -66,8 +66,13 @@ namespace reimu {
 
 
     class EventLoop : public noncopyable {
-    public:
+    private:
         EventLoop();
+    public:
+
+        static EventLoop* GetInstance();
+
+        inline static EventLoop * _loop = nullptr;
 
     public:
 
@@ -103,6 +108,7 @@ namespace reimu {
         void RemoveChannel(Channel * ch);
 
         void UpdateChannel(Channel* ch);
+
 
     private:
         std::unique_ptr<EventLoopImpAbc> _imp;

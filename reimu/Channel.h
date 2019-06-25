@@ -20,7 +20,7 @@ namespace reimu {
         int _poll_index; // poll的下标 方便直接修改
         ChannelCallBack _read_cb, _write_cb;
     public:
-        Channel(EventLoop *loop, int fd);
+        Channel(EventLoop *loop, SocketPtr socket);
 
         Channel(EventLoop *loop);
 
@@ -53,7 +53,11 @@ namespace reimu {
         }
 
         int Fd() {
-            return _socket->fd();
+            if (_socket != nullptr){
+                return _socket->fd();
+            } else {
+                return -1;
+            }
         }
 
         Socket* GetSocket() {

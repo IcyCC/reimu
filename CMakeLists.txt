@@ -32,7 +32,13 @@ add_executable(reimu
         reimu/Buffer.h
         reimu/TcpConn.cpp
         reimu/TcpConn.h
+
+     reimu/Acceptor.cpp
+        reimu/Acceptor.h reimu/TcpServer.cpp
+        reimu/TcpServer.h
+        tests/test_server.cpp
         #tests/test_timer.cpp
-       # tests/test_threading.cpp
-#        tests/test_buffer_slice.cpp
-        tests/test_conn.cpp reimu/Acceptor.cpp reimu/Acceptor.h)
+        # tests/test_threading.cpp
+        # tests/test_buffer_slice.cpp
+        # tests/test_conn.cpp
+        )

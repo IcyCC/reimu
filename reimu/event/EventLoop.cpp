@@ -201,6 +201,16 @@ namespace reimu {
     };
 
 
+    EventLoop* EventLoop::GetInstance() {
+        std::mutex l;
+        std::lock_guard<std::mutex> lock(l);
+        if (_loop == nullptr) {
+            _loop = new EventLoop();
+        }
+        return _loop;
+    }
+
+
     Poller *EventLoop::GetPoller() {
         return _imp->GetPoller();
     }

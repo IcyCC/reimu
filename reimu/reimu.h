@@ -10,5 +10,6 @@
 #include "Codec.h"
 #include "TcpConn.h"
 #include "event/EventLoop.h"
+#include "TcpServer.h"
 
 #endif //REIMU_REIMU_H

@@ -17,6 +17,11 @@ namespace reimu {
         IPv4Addr(){};
         IPv4Addr(const std::string &host, unsigned short port);
         IPv4Addr(const struct sockaddr_in &addr) : addr_(addr) {};
+
+        std::string ToString() {
+            std::string s = inet_ntoa(addr_.sin_addr);
+            return s;
+        }
     };
 
     inline const IPv4Addr DeafultLocaAddr = IPv4Addr();

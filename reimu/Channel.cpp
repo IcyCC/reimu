@@ -7,9 +7,9 @@
 #include "event/EventLoop.h"
 
 namespace reimu  {
-    Channel::Channel(reimu::EventLoop *loop, int fd) {
+    Channel::Channel(EventLoop *loop, SocketPtr socket) {
         _loop = loop;
-        _socket = std::make_shared<Socket>(fd, DeafultLocaAddr);
+        _socket = socket;
         _events = 0;
         _read_cb = _write_cb = nullptr;
     }
@@ -26,7 +26,11 @@ namespace reimu  {
     }
 
     void Channel::update() {
-        _loop->UpdateChannel(this);
+        if (_socket != nullptr) {
+            _loop->UpdateChannel(this);
+        } else {
+            exit(1);
+        }
     }
 
     void Channel::Close() {

@@ -40,10 +40,11 @@ namespace reimu {
             initChannel();
         };
 
-        TcpConn(EventLoop *loop, int timeout, int fd) : _loop(loop), _timeout(timeout) {
-            _channel = std::make_unique<Channel>(_loop, fd);
+        TcpConn(EventLoop *loop, int timeout, SocketPtr socket) : _loop(loop), _timeout(timeout) {
+            _channel = std::make_unique<Channel>(_loop, socket);
             _state = TcpConnState::IDLE;
             _codec = std::make_unique<LineCodec>();
+            initChannel();
         }
 
         ~TcpConn();
@@ -52,9 +53,26 @@ namespace reimu {
             return _loop;
         }
 
-        void SetCodec(CodecBase* codec) {
+        void SetCodec(CodecBase *codec) {
             _codec.reset(codec);
         }
+
+        int Fd();
+
+        Channel *GetChannel();
+
+        IPv4Addr GetDestAddr() {
+            return _dest_addr;
+        };
+
+        TcpConnState GetState () {
+            return _state;
+        }
+
+        void SetConnState(TcpConnState state) {
+            _state = state;
+        }
+
 
     public:
         void OnMsg(const TcpMsgCallBack &cb) { _msg_cb = cb; }; // 收到消息
@@ -76,7 +94,7 @@ namespace reimu {
 
         void Send(const std::string &s);
 
-        void AttachChannel(Channel * channel);
+        void AttachChannel(reimu::Channel *channel, IPv4Addr &rAddr);
 
     public:
         void handleWrite();

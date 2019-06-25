@@ -35,7 +35,8 @@ namespace reimu {
     class Timer;
     class TcpConn;
     class Socket;
-
+    class Acceptor;
+    class TcpServer;
 
     typedef std::shared_ptr<Channel> ChannelPrt;
     typedef std::vector<Channel*> ChannelList;
@@ -48,6 +49,8 @@ namespace reimu {
 
     typedef std::function<void(TcpConnPtr, Slice)> TcpMsgCallBack;
     typedef std::function<void(TcpConnPtr)> TcpCallBack;
+
+    typedef std::function<void (SocketPtr)> AccpetCallBack;
 
     class ThreadingPool;
 

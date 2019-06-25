@@ -13,7 +13,6 @@ namespace reimu {
 
     void TcpConn::Connect(const reimu::IPv4Addr &addr) {
         _dest_addr = addr;
-        _loop->AddChannel(_channel.get());
         int ret = ::connect(_channel->Fd(), (struct sockaddr *) &addr.addr_, sizeof(struct sockaddr));
         if (ret == -1) {
 
@@ -54,7 +53,7 @@ namespace reimu {
     void TcpConn::initChannel() {
 
         // 初始化频道
-
+        _loop->AddChannel(_channel.get());
         _channel->OnRead([this]() {
             this->handleRead();
         });
@@ -76,6 +75,7 @@ namespace reimu {
                 // 处理错误
                 if (n == 0) {
                     // 套接字对端断开
+                    _state = TcpConnState ::CLOSED;
                     if (_disconnected_cb != nullptr ){
                         _loop->CreateTask([this,conn](){this->_disconnected_cb(conn);});
                     }
@@ -135,8 +135,17 @@ namespace reimu {
         this->_channel.reset(nullptr);
     }
 
-    void TcpConn::AttachChannel(reimu::Channel *channel) {
+    void TcpConn::AttachChannel(reimu::Channel *channel, IPv4Addr & rAddr) {
         _channel.reset(channel);
+        _dest_addr = rAddr;
         initChannel();
+    }
+
+    int TcpConn::Fd() {
+        return _channel->Fd();
+    }
+
+    Channel* TcpConn::GetChannel() {
+        return _channel.get();
     }
 }
