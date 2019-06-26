@@ -110,7 +110,7 @@ namespace reimu {
         auto it = _timers.upper_bound(std::make_pair(current_time, 0));
         while (it != _timers.end()) {
             if (it->second->GetStatus() == Task::TaskStatus::PENDING){
-                it->second->_cb();
+                CreateTask(it->second->_cb);
                 if (it->second->GetRepeat() > 0) {
                     // 重复任务
                     it->second->SetRunAt(it->second->GetRunAt() + it->second->GetRepeat());
