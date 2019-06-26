@@ -7,6 +7,7 @@
 
 #include "../reimu_imp.h"
 #include "../Util.h"
+#include "../thead/SafeQueue.h"
 
 
 namespace reimu {
@@ -26,7 +27,7 @@ namespace reimu {
     private:
         inline static Logging *_logger = nullptr;
         LogLevel _level;
-        std::mutex _mutex;
+        inline static std::mutex _mutex = std::mutex();
         std::thread _t;
         std::function<void (const LogTask)> _log_cb;
 
@@ -44,33 +45,47 @@ namespace reimu {
 
         void Log(LogLevel level, const std::string &s);
 
-
-
     };
 
 
     class InfoLogger : public  noncopyable{
-        friend std::istream &operator>>( std::istream  &input, InfoLogger &l )
-        {
-            std::string s;
-            input >>s ;
+    public:
+        const InfoLogger& operator<<(const std::string & s)const {
             Logging::GetLogger()->Info(s);
-            return input;
-        }
+            return *this;
+        };
     };
 
     class DebugLogger : public  noncopyable{
-        friend std::istream &operator>>( std::istream  &input, DebugLogger &l )
-        {
-            std::string s;
-            input >>s ;
+    public:
+        const DebugLogger& operator<<(const std::string & s)const {
             Logging::GetLogger()->Debug(s);
-            return input;
-        }
+            return *this;
+        };
+    };
+
+    class WarnLogger : public  noncopyable{
+    public:
+        const WarnLogger& operator<<(const std::string & s)const {
+            Logging::GetLogger()->Warn(s);
+            return *this;
+        };
+    };
+
+    class ErrorLogger : public  noncopyable{
+    public:
+       const ErrorLogger& operator<<(const std::string & s)const {
+            Logging::GetLogger()->Error(s);
+           return *this;
+        };
     };
 
     inline  InfoLogger INFO_LOG = InfoLogger();
     inline  DebugLogger DEBUG_LOG = DebugLogger();
+    inline  WarnLogger WARN_LOG = WarnLogger();
+    inline  ErrorLogger ERROR_LOG = ErrorLogger();
+
+    inline  Logging* DefaultLogger = Logging::GetLogger();
 
 
 }

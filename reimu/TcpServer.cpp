@@ -16,9 +16,11 @@ namespace reimu {
 
     void TcpServer::StartServer() {
         _acceptor->Listen();
+        INFO_LOG<<"服务器开始运行 监听: " + _acceptor->_listen_addr.ToString();
     }
 
     void TcpServer::handleAccept(reimu::SocketPtr socket) {
+        INFO_LOG<<"服务器收到 来自: " + socket->_addr.ToString() + " 的请求";
         auto c = std::make_shared<TcpConn>(_loop, -1, socket);
         c->OnMsg(_conn_msg_cb);
         c->OnConnected(_conn_connected_cb);

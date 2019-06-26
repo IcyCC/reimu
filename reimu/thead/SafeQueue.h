@@ -51,7 +51,7 @@ namespace reimu {
 
     template <typename T>
     bool SafeQueue<T>::Push(T &&v) {
-        Push(std::move(v));
+        Push(v);
         return true;
     }
 

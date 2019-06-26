@@ -22,6 +22,7 @@
 #include <condition_variable>
 #include "Util.h"
 #include <arpa/inet.h>
+#include "log/Logging.h"
 #include "thead/SafeCounter.h"
 #include "thead/SafeQueue.h"
 #include "Codec.h"

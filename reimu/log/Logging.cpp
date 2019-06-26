@@ -9,7 +9,8 @@ namespace reimu {
     Logging::Logging() {
         _level = LogLevel::LOG_INFO;
         _log_cb = [this](const LogTask &t) {
-            std::cout << util::CurrentReadableTime() << " " << Logging::LOG_LEVEL_STR[t.first] << " " << t.second;
+            std::cout << util::CurrentReadableTime() << " " << Logging::LOG_LEVEL_STR[t.first] << " " << t.second<<std::endl;
+            std::cout.flush();
         };
         _t = std::thread([this]() {
             while (!this->_log_queue.Exited()) {
@@ -19,6 +20,7 @@ namespace reimu {
                 }
             }
         });
+        _t.detach();
     }
 
     Logging *Logging::GetLogger() {
@@ -60,4 +62,6 @@ namespace reimu {
     void Logging::Error(const std::string &s) {
         Log(LogLevel::LOG_ERROR, s);
     }
+
+
 }
