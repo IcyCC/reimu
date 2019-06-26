@@ -3,10 +3,64 @@
 ## 目标
 
 * reactor + 多线程
-* 高性能日志库
+* 高性能日志库 （30%）
 * 基于切片的字符串处理
 * 定时任务
 * Tcp链接处理
+
+## Get start
+
+
+客户端：
+
+```cpp
+
+auto loop = reimu::EventLoop::GetInstance();
+
+auto c = std::make_shared<reimu::TcpConn>(&loop, 10);
+
+c->OnConnected([](reimu::TcpConnPtr conn ){
+    std::cout<<"链接成功"<<std::endl;
+    conn->Send("hello");
+});
+
+c->OnMsg([](reimu::TcpConnPtr conn, reimu::Slice s ){
+
+    std::cout<<"收到消息"<<s.toString()<<std::endl;
+});
+
+c->Connect("0.0.0.0", 10010);
+
+
+loop->Loop();
+```
+
+
+服务端：
+
+```cpp
+    auto loop = reimu::EventLoop::GetInstance();
+
+    auto s = new reimu::TcpServer(loop, "0.0.0.0", 10011);
+    s->SetConnTimeout(5000);
+
+    s->OnConnMsg([](reimu::TcpConnPtr conn, reimu::Slice s) {
+
+        std::cout << "收到消息" << s.toString() << std::endl;
+        conn->Send("hello");
+    });
+
+    s->OnConnDisconnected([](reimu::TcpConnPtr conn) {
+        std::cout << "断开链接"<<std::endl;
+
+    });
+    s->OnAccept([](reimu::TcpConnPtr conn) {
+        std::cout << "收到链接"<< "来自 "<<conn->GetDestAddr().ToString()<<std::endl;
+    });
+
+    s->StartServer();
+    loop->Loop();
+```
 
 
 ## Q&A
@@ -34,7 +88,7 @@ erron 的 EAGAIN EMFILE EINTR ECONNABORTED 不视作错误  直接重试或等�
 
 * Q5: 日志处理？
 
-基于SafeQueue做日志异步消费
+目前只是一个简单的基于SafeQueue做日志异步消费
 
 * Q6: 超时处理？
 
