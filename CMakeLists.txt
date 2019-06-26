@@ -35,9 +35,13 @@ add_executable(reimu
      reimu/Acceptor.cpp
         reimu/Acceptor.h reimu/TcpServer.cpp
         reimu/TcpServer.h
-        tests/test_server.cpp
+
+        reimu/log/Logging.cpp
+        reimu/log/Logging.h
+        tests/test_server_timeout.cpp
+        #tests/test_server.cpp
         #tests/test_timer.cpp
         # tests/test_threading.cpp
-         #tests/test_buffer_slice.cpp
+        #tests/test_buffer_slice.cpp
         #tests/test_conn.cpp
-        reimu/log/Logging.cpp reimu/log/Logging.h)
+        )

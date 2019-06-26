@@ -31,7 +31,9 @@ namespace reimu {
         } else {
             auto conn_socket  = std::make_shared<Socket>(conn_fd, c_addr);
             if (_accept_cb != nullptr) {
-                _accept_cb(conn_socket);
+                _loop->CreateTask([this, conn_socket](){
+                    this->_accept_cb(conn_socket);
+                });
             }
         }
     }

@@ -8,6 +8,7 @@
 #include "Buffer.h"
 #include "Codec.h"
 #include "TcpConn.h"
+#include "event/Task.h"
 #include "event/EventLoop.h"
 #include "TcpServer.h"
 

@@ -31,6 +31,8 @@ namespace reimu {
         TcpConnState _state;
         IPv4Addr _dest_addr;
 
+        TimerPtr _timeout_timer;
+
         std::mutex _mutex;
     public:
         TcpConn(EventLoop *loop, int timeout) : _loop(loop), _timeout(timeout) {
@@ -49,6 +51,7 @@ namespace reimu {
             _output_buf = std::make_shared<Buffer>();
             _codec = std::make_unique<LineCodec>();
             initChannel();
+            refreshTimeoutTimer();
         }
 
         ~TcpConn();
@@ -77,6 +80,16 @@ namespace reimu {
             _state = state;
         }
 
+        void SetTimeout(int timeout) {
+            _timeout = timeout;
+        }
+
+        int GetTimeout(){
+            return _timeout;
+        }
+
+        void refreshTimeoutTimer();
+
 
     public:
         void OnMsg(const TcpMsgCallBack &cb) { _msg_cb = cb; }; // 收到消息
@@ -95,6 +108,7 @@ namespace reimu {
         void Close();
 
         void CleanUp();
+
 
         void Send(const std::string &s);
 

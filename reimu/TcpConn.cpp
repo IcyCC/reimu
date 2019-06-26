@@ -4,6 +4,7 @@
 
 #include "TcpConn.h"
 #include "Channel.h"
+#include "event/Task.h"
 #include "event/EventLoop.h"
 
 namespace reimu {
@@ -13,11 +14,12 @@ namespace reimu {
 
     void TcpConn::Connect(const reimu::IPv4Addr &addr) {
         _dest_addr = addr;
+        refreshTimeoutTimer();
         int ret = ::connect(_channel->Fd(), (struct sockaddr *) &addr.addr_, sizeof(struct sockaddr));
         if (ret == -1) {
 
         }
-        _state = TcpConnState ::SHAKEHANDS;
+        _state = TcpConnState::SHAKEHANDS;
 
     }
 
@@ -67,6 +69,7 @@ namespace reimu {
     }
 
     void TcpConn::handleRead() {
+        refreshTimeoutTimer();
         auto conn = shared_from_this();
         while (_state == TcpConn::CONNECTED) {
             char buffer[READ_BUFFER_SIZE];
@@ -76,9 +79,9 @@ namespace reimu {
                 // 处理错误
                 if (n == 0) {
                     // 套接字对端断开
-                    _state = TcpConnState ::CLOSED;
-                    if (_disconnected_cb != nullptr ){
-                        _loop->CreateTask([this,conn](){this->_disconnected_cb(conn);});
+                    _state = TcpConnState::CLOSED;
+                    if (_disconnected_cb != nullptr) {
+                        _loop->CreateTask([this, conn]() { this->_disconnected_cb(conn); });
                     }
                     break;
                 } else if (n == -1 && errno == EINTR) {
@@ -91,12 +94,12 @@ namespace reimu {
                 _input_buf->Write(buffer);
             }
 
-            while (true){
+            while (true) {
                 auto s = _input_buf->ToSlice();
-                auto msg =_codec->tryDecode(s);
-                if (!msg.empty()){
+                auto msg = _codec->tryDecode(s);
+                if (!msg.empty()) {
                     // 解析到数据 调用回调并且尝试再次解析
-                    _loop->CreateTask([this, msg,conn](){
+                    _loop->CreateTask([this, msg, conn]() {
                         this->_msg_cb(conn, msg);
                     });
                     _input_buf->Consume(msg.size());
@@ -110,17 +113,19 @@ namespace reimu {
     }
 
     void TcpConn::handleWrite() {
-        if (_state == TcpConnState::CONNECTED ){
+        if (_state == TcpConnState::CONNECTED) {
             auto s = _output_buf->ToSlice();
-            if (!s.empty()){
+            if (!s.empty()) {
+                refreshTimeoutTimer();
                 size_t sended = writeImp(_channel->Fd(), s.data(), s.size());
                 _output_buf->Consume(sended);
             }
         } else if (_state == TcpConnState::SHAKEHANDS) {
+            refreshTimeoutTimer();
             _state = TcpConnState::CONNECTED;
             auto conn = shared_from_this();
-            _loop->CreateTask([this, conn](){
-                if (_connected_cb != nullptr ){
+            _loop->CreateTask([this, conn]() {
+                if (_connected_cb != nullptr) {
                     this->_connected_cb(conn);
                 }
             });
@@ -129,14 +134,26 @@ namespace reimu {
     }
 
     void TcpConn::handleTimeout() {
-
+        _state = TcpConnState ::ERROR;
+        auto conn = shared_from_this();
+        this->_timeout_timer->Cancel();
+        this->_timeout_timer.reset();
+        if (_timeout_cb != nullptr){
+            _timeout_cb(conn);
+            CleanUp();
+        }
     }
 
     void TcpConn::CleanUp() {
+        _state = TcpConnState::CLOSED;
+        if (_timeout_timer != nullptr){
+            _timeout_timer->Cancel();
+            _timeout_timer.reset();
+        }
         this->_channel.reset(nullptr);
     }
 
-    void TcpConn::AttachChannel(reimu::Channel *channel, IPv4Addr & rAddr) {
+    void TcpConn::AttachChannel(reimu::Channel *channel, IPv4Addr &rAddr) {
         _channel.reset(channel);
         _dest_addr = rAddr;
         initChannel();
@@ -146,7 +163,20 @@ namespace reimu {
         return _channel->Fd();
     }
 
-    Channel* TcpConn::GetChannel() {
+    void TcpConn::refreshTimeoutTimer() {
+            if (_timeout_timer != nullptr){
+                _timeout_timer->Cancel();
+            }
+            if (_timeout > 0){
+                _timeout_timer = _loop->CallLater([this](){
+                    handleTimeout();
+                }, _timeout);
+            }
+    }
+
+    Channel *TcpConn::GetChannel() {
         return _channel.get();
     }
+
+
 }

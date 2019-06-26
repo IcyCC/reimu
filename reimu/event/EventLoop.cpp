@@ -71,6 +71,8 @@ namespace reimu {
     TimerPtr DefaultEventLoopImp::CallAt(const reimu::TaskCallBack &cb, time_t at) {
         auto t = std::make_shared<Timer>(this->_loop, cb, at, -1);
         int timer_id = REIMU_GLOBAL_COUNTER.Add();
+        t->SetStatus(Task::TaskStatus::PENDING);
+
         t->SetId(timer_id);
         _timers.insert(std::make_pair(std::make_pair(at, timer_id), t));
         return t;
@@ -85,6 +87,7 @@ namespace reimu {
         time_t at = util::TimeMilli() + r;
         auto t = std::make_shared<Timer>(this->_loop, cb, at, r);
         int timer_id = REIMU_GLOBAL_COUNTER.Add();
+        t->SetStatus(Task::TaskStatus::PENDING);
         t->SetId(timer_id);
         _timers.insert(std::make_pair(std::make_pair(at, timer_id), t));
         return t;
@@ -93,7 +96,6 @@ namespace reimu {
     int DefaultEventLoopImp::CancelTimer(reimu::Timer *t) {
         if (t->GetStatus() == Task::TaskStatus::PENDING) {
             t->SetStatus(Task::TaskStatus::CANCEL);
-            _timers.erase(std::make_pair(t->GetRunAt(), t->GetId()));
             return 1;
         }
         return 0;
@@ -107,15 +109,15 @@ namespace reimu {
         time_t current_time = util::TimeMilli();
         auto it = _timers.upper_bound(std::make_pair(current_time, 0));
         while (it != _timers.end()) {
-            it->second->_cb();
-            if (it->second->GetRepeat() > 0) {
-                // 重复任务
-                auto t = std::make_shared<Timer>(_loop, it->second->_cb, current_time + it->second->GetRepeat(),
-                                                 it->second->GetRepeat());
-                t->SetId(it->second->GetId());
-                _timers.insert(
-                        std::make_pair(std::make_pair(t->GetRunAt(), it->second->GetId()), t)
-                );
+            if (it->second->GetStatus() == Task::TaskStatus::PENDING){
+                it->second->_cb();
+                if (it->second->GetRepeat() > 0) {
+                    // 重复任务
+                    it->second->SetRunAt(it->second->GetRunAt() + it->second->GetRepeat());
+                    _timers.insert(
+                            std::make_pair(std::make_pair(it->second->GetRunAt(), it->second->GetId()), it->second)
+                    );
+                }
             }
             _timers.erase(it++);
         }
@@ -216,7 +218,9 @@ namespace reimu {
     }
 
     int Timer::Cancel() {
-        return this->_loop->CancelTimer(this);
+        if (this != nullptr){
+            return this->_loop->CancelTimer(this);
+        }
     }
 
 

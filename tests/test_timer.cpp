@@ -8,9 +8,7 @@
 int main() {
     auto loop = reimu::EventLoop::GetInstance();
 
-    auto t1 = loop->CallLater([]() {
-        std::cout << "task 1" << std::endl;
-    }, 5000);
+
 
     auto t2 = loop->CallLater([]() {
         std::cout << "task 2" << std::endl;
@@ -20,5 +18,17 @@ int main() {
         std::cout << "task 3" << std::endl;
     }, 2000);
 
-    loop.Loop();
+    auto t1 = loop->CallLater([t3]() {
+        std::cout << "task 1" << std::endl;
+        t3->Cancel();
+    }, 8000);
+
+    auto t4 = loop->CallLater([t3]() {
+        std::cout << "task 4" << std::endl;
+        t3->Cancel();
+    }, 8000);
+
+    t4->Cancel();
+
+    loop->Loop();
 }

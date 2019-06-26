@@ -65,6 +65,7 @@ namespace reimu  {
         this->_loop->AddChannel(this);
     }
 
+
     void Channel::CleanUp() {
         Close();
         _socket.reset();

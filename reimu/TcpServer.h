@@ -19,6 +19,7 @@ namespace reimu {
         TcpMsgCallBack _conn_msg_cb; //这些回调会注册到每一个conn上
         TcpCallBack _accept_cb; //暴露给用户
         EventLoop *_loop;
+        int _conn_timeout;
     public:
         TcpServer(EventLoop *loop, const IPv4Addr &addr);
 
@@ -34,8 +35,16 @@ namespace reimu {
 
         void OnAccept(const TcpCallBack &cb) { _accept_cb = cb; };
 
+        void SetConnTimeout(int timeout);
+
+        int GetConnTimeout(){
+            return _conn_timeout;
+        }
+
     public:
         void handleAccept(SocketPtr socket);
+        void handleTimeout(TcpConnPtr conn);
+        void handleDisconnected(TcpConnPtr conn);
     };
 
 }
