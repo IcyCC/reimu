@@ -3,8 +3,8 @@
 //
 
 #include "EventLoop.h"
-#include "../poller/Poller.h"
-#include "../thead/ThreadingPool.h"
+#include "poller/Poller.h"
+#include "thead/ThreadingPool.h"
 #include "Task.h"
 namespace reimu {
 

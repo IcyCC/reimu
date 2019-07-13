@@ -3,7 +3,7 @@
 //
 
 #include "ThreadingPool.h"
-#include "../event/Task.h"
+#include "event/Task.h"
 
 namespace reimu{
     ThreadingPool::ThreadingPool(int threads, int wait_ms) :_threads(threads), _waitMs(wait_ms) {

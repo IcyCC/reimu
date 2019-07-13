@@ -3,7 +3,7 @@
 //
 
 #include "PPoller.h"
-#include "../Channel.h"
+#include "Channel.h"
 
 namespace reimu {
     void PPollerImp::AddChannel(Channel* ch) {

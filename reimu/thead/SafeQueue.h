@@ -5,7 +5,7 @@
 #ifndef REIMU_SAFEQUEUE_H
 #define REIMU_SAFEQUEUE_H
 
-#include "../reimu_imp.h"
+#include "reimu_imp.h"
 
 namespace reimu {
     template <typename  T>

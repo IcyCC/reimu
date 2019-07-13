@@ -5,7 +5,7 @@
 #ifndef REIMU_POLLER_H
 #define REIMU_POLLER_H
 
-#include "../reimu_imp.h"
+#include "reimu_imp.h"
 
 namespace reimu {
 

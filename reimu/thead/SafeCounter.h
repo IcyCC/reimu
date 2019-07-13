@@ -5,7 +5,7 @@
 #ifndef REIMU_SAFECOUNTER_H
 #define REIMU_SAFECOUNTER_H
 
-#include "../reimu_imp.h"
+#include "reimu_imp.h"
 
 namespace reimu {
     // 线程安全计数器

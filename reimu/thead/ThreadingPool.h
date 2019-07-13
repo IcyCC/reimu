@@ -4,7 +4,7 @@
 
 #ifndef REIMU_THREADINGPOOL_H
 #define REIMU_THREADINGPOOL_H
-#include "../reimu_imp.h"
+#include "reimu_imp.h"
 #include "SafeQueue.h"
 
 namespace reimu {

@@ -2,7 +2,7 @@
 // Created by 苏畅 on 2019/6/26.
 //
 
-#include "../reimu/reimu.h"
+#include "reimu.h"
 #include <iostream>
 #include <memory>
 

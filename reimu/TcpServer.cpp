@@ -26,7 +26,7 @@ namespace reimu {
         c->OnMsg(_conn_msg_cb);
         c->OnConnected(_conn_connected_cb);
         c->OnDisconnected([this] (reimu::TcpConnPtr conn){
-            this->handleDisconnected()
+            this->handleDisconnected(conn);
         });
         c->OnTimeout([this ](reimu::TcpConnPtr conn){
             this->handleTimeout(conn);

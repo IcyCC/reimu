@@ -5,9 +5,9 @@
 #ifndef REIMU_EVENTLOOP_H
 #define REIMU_EVENTLOOP_H
 
-#include "../reimu_imp.h"
-#include "../poller/Poller.h"
-#include "../Channel.h"
+#include "reimu_imp.h"
+#include "poller/Poller.h"
+#include "Channel.h"
 
 
 

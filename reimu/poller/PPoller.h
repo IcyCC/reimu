@@ -5,7 +5,7 @@
 #ifndef REIMU_PPOLLER_H
 #define REIMU_PPOLLER_H
 
-#include "../reimu_imp.h"
+#include "reimu_imp.h"
 #include "Poller.h"
 #include <sys/poll.h>
 

@@ -5,9 +5,9 @@
 #ifndef REIMU_LOGGING_H
 #define REIMU_LOGGING_H
 
-#include "../reimu_imp.h"
-#include "../Util.h"
-#include "../thead/SafeQueue.h"
+#include "reimu_imp.h"
+#include "Util.h"
+#include "thead/SafeQueue.h"
 
 
 namespace reimu {
