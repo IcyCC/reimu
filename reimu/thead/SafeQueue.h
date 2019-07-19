@@ -20,7 +20,7 @@ namespace reimu {
 
         bool Push(const T &v);
 
-        T PopWait(int waitMs = wait_infinite);
+        bool PopWait(T*v, int waitMs=0);
 
         size_t  Size();
 
@@ -72,7 +72,7 @@ namespace reimu {
             return ;
         }
 
-        if (waitMs == wait_infinite) {
+        if (waitMs < 1) {
             ready_.wait(lk, [this] { return exit_ || !items_.empty(); });
         } else {
             auto tp = std::chrono::steady_clock::now() + std::chrono::milliseconds(waitMs);
@@ -82,15 +82,16 @@ namespace reimu {
     }
 
     template <typename T>
-    T SafeQueue<T>::PopWait(int waitMs) {
+    bool SafeQueue<T>::PopWait(T*v, int waitMs) {
         std::unique_lock<std::mutex> lk(*this);
         waitReady(lk, waitMs);
         if (items_.empty()){
-            return T();
+            // 退出了
+            return false;
         }
-        T r =  std::move(items_.front());
+        *v =  std::move(items_.front());
         items_.pop_front();
-        return r;
+        return true;
     }
 }
 

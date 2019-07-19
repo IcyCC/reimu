@@ -18,7 +18,10 @@ namespace reimu{
         for (auto &th : _threads) {
             auto t = std::thread([this](){
                while(!this->_tasks.Exited()){
-                    auto task = _tasks.PopWait(this->_waitMs);
+                   TaskPtr task;
+                    if (! _tasks.PopWait(&task)){
+                        return;
+                    }
                     if (task != nullptr) {
                         task->_cb();
                         task->SetStatus(Task::TaskStatus::FINISH);

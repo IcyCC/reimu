@@ -24,14 +24,15 @@ namespace reimu {
 
         inline static const char LOG_LEVEL_STR[4][20] = {"ERROR", "WARN", "INFO", "DEBUG"};
         typedef std::pair<LogLevel , const std::string> LogTask;
+        typedef std::shared_ptr<LogTask> LogTaskPtr;
     private:
         inline static Logging *_logger = nullptr;
         LogLevel _level;
         inline static std::mutex _mutex = std::mutex();
         std::thread _t;
-        std::function<void (const LogTask)> _log_cb;
+        std::function<void (const LogTaskPtr)> _log_cb;
 
-        SafeQueue<LogTask> _log_queue;
+        SafeQueue<LogTaskPtr> _log_queue;
 
     public:
         static Logging *GetLogger();

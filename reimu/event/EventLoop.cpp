@@ -13,7 +13,7 @@ namespace reimu {
     public:
         DefaultEventLoopImp(EventLoop *loop) {
             _loop = loop;
-            _threading_pool = std::make_shared<ThreadingPool>(5, -1);
+            _threading_pool = std::make_shared<ThreadingPool>(4,-1);
             _threading_pool->Start();
             _poller = std::make_unique<Poller>();
         }
@@ -128,7 +128,7 @@ namespace reimu {
             return;
         } else {
             ChannelList activeChannels;
-            _poller->Poll(0, activeChannels);
+            _poller->Poll(1000, activeChannels);
             for (auto &c : activeChannels) {
                 // 并发处理
                 if (c->GetEvents() & (_poller->REIMU_POLLIN | _poller->REIMU_POLLERR)) {
