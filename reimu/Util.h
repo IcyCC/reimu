@@ -9,6 +9,9 @@
 #include <cstdio>
 #include <time.h>
 #include <string>
+#include <signal.h>
+#include <functional>
+#include <map>
 
 namespace reimu {
 
@@ -34,6 +37,15 @@ namespace reimu {
             char tmp[64];
             strftime(tmp, sizeof(tmp), "%Y-%m-%d %H:%M:%S", localtime(&timep));
             return tmp;
+        }
+    };
+
+    struct Signal {
+        static std::map<int, std::function<void()>> handlers;
+        static void signal(int sig, const std::function<void()> &handler);
+
+        static inline void signal_handler(int sig) {
+            handlers[sig]();
         }
     };
 }

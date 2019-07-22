@@ -49,7 +49,7 @@ namespace reimu {
     typedef std::shared_ptr<Socket> SocketPtr;
     typedef std::shared_ptr<TcpConn> TcpConnPtr;
 
-    typedef std::function<void(TcpConnPtr, Slice)> TcpMsgCallBack;
+    typedef std::function<void(TcpConnPtr, const std::string &)> TcpMsgCallBack;
     typedef std::function<void(TcpConnPtr)> TcpCallBack;
 
     typedef std::function<void (SocketPtr)> AccpetCallBack;

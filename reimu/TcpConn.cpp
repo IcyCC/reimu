@@ -98,11 +98,11 @@ namespace reimu {
                 auto s = _input_buf->ToSlice();
                 auto msg = _codec->tryDecode(s);
                 if (!msg.empty()) {
+                    _input_buf->Consume(msg.size());
                     // 解析到数据 调用回调并且尝试再次解析
                     _loop->CreateTask([this, msg, conn]() {
                         this->_msg_cb(conn, msg);
                     });
-                    _input_buf->Consume(msg.size());
                     continue;
                 } else {
                     return;

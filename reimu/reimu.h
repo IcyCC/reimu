@@ -11,5 +11,6 @@
 #include "event/Task.h"
 #include "event/EventLoop.h"
 #include "TcpServer.h"
+#include "Util.h"
 
 #endif //REIMU_REIMU_H

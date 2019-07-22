@@ -20,8 +20,8 @@ add_executable(reimu
         reimu/TcpServer.cpp
 
         reimu/log/Logging.cpp
-        tests/test_server_timeout.cpp
-        #tests/test_server.cpp
+        #tests/test_server_timeout.cpp
+        tests/test_server.cpp
         #tests/test_timer.cpp
         # tests/test_threading.cpp
         #tests/test_buffer_slice.cpp

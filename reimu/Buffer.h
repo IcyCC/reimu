@@ -28,23 +28,6 @@ namespace reimu {
 
         Slice(const char *s) : pb_(s), pe_(s + strlen(s)) {}
 
-        Slice(BufferPtr buf) : Slice() { _buf = buf; }
-
-        Slice(BufferPtr buf, const char *b, const char *e) : Slice(b, e) {
-            _buf = buf;
-        }
-
-        Slice(BufferPtr buf, const char *d, size_t n) : Slice(d, n) {
-            _buf = buf;
-        }
-
-        Slice(BufferPtr buf, const std::string &s) : Slice(s) {
-            _buf = buf;
-        }
-
-        Slice(BufferPtr buf, const char *s) : Slice(s) {
-            _buf = buf;
-        }
 
 
         const char *data() const { return pb_; }
@@ -71,13 +54,13 @@ namespace reimu {
         Slice eatLine();
 
         Slice eat(int sz) {
-            Slice s(_buf, pb_, sz);
+            Slice s( pb_, sz);
             pb_ += sz;
             return s;
         }
 
         Slice sub(int boff, int eoff = 0) const {
-            Slice s(_buf, *this);
+            Slice s(*this);
             s.pb_ += boff;
             s.pe_ += eoff;
             return s;
@@ -103,18 +86,10 @@ namespace reimu {
 
         std::vector<Slice> split(char ch) const;
 
-        void SetBuffer(BufferPtr buf) {
-            _buf.swap(buf);
-        };
-
-        BufferPtr GetBuffer() {
-            return _buf;
-        }
 
     private:
         const char *pb_;
         const char *pe_;
-        BufferPtr _buf;
 
     };
 
@@ -177,12 +152,12 @@ namespace reimu {
         const char *pb = pb_;
         for (const char *p = pb_; p < pe_; p++) {
             if (*p == ch) {
-                r.push_back(Slice(_buf, pb, p));
+                r.push_back(Slice( pb, p));
                 pb = p + 1;
             }
         }
         if (pe_ != pb_)
-            r.push_back(Slice(_buf, pb, pe_));
+            r.push_back(Slice(pb, pe_));
         return r;
     }
 
@@ -222,7 +197,7 @@ namespace reimu {
 
         Slice ToSlice() {
             std::lock_guard<std::mutex> lock(_mutex);
-            return Slice(shared_from_this(), &*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
+            return Slice(&*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
         }
 
     private:

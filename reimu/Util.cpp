@@ -9,4 +9,12 @@ namespace reimu {
         std::chrono::time_point<std::chrono::system_clock> p = std::chrono::system_clock::now();
         return std::chrono::duration_cast<std::chrono::microseconds>(p.time_since_epoch()).count();
     };
+
+    std::map<int, std::function<void()>> Signal::handlers;
+
+    void Signal::signal(int sig, const std::function<void()> &handler) {
+        handlers[sig] = handler;
+        ::signal(sig, signal_handler);
+    }
+
 }

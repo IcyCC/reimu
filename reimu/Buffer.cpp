@@ -10,11 +10,11 @@ namespace reimu {
         std::lock_guard<std::mutex> lock(_mutex);
         prepend();
         if (_read_idx + n >= _write_idx) {
-            auto s = Slice(shared_from_this(), &*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
+            auto s = Slice( &*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
             _read_idx = _write_idx;
             return s;
         } else {
-            auto s = Slice(shared_from_this(), &*(_v.begin() + _read_idx), &*(_v.begin() + n));
+            auto s = Slice( &*(_v.begin() + _read_idx), &*(_v.begin() + n));
             _read_idx = _read_idx + n;
             return s;
         }
@@ -37,8 +37,7 @@ namespace reimu {
     }
 
     long Buffer::prepend() {
-        auto use_cout = this->weak_from_this().use_count();
-        if (_read_idx > MAX_PREPENND_LENGTH && use_cout == 1) {
+        if (_read_idx > MAX_PREPENND_LENGTH ) {
             // 无人使用
             long old_read_idx = _read_idx;
             _v.erase(_v.begin(), _v.begin() + _read_idx);
@@ -52,7 +51,7 @@ namespace reimu {
     Slice Buffer::ReadAll() {
         std::lock_guard<std::mutex> lock(_mutex);
         prepend();
-        auto s = Slice(shared_from_this(), &*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
+        auto s = Slice(&*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
         _read_idx = _write_idx;
         return s;
     }
