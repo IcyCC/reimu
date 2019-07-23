@@ -8,12 +8,12 @@ Destination: [127.0.0.1]:2099
 Interface lo0 address [127.0.0.1]:0
 Using interface lo0 to connect to [127.0.0.1]:2099
 Ramped up to 50 connections.
-Total data sent:     60.3 MiB (63202962 bytes)
-Total data received: 62.8 MiB (65828900 bytes)
-Bandwidth per channel: 2.063⇅ Mbps (257.8 kBps)
-Aggregate bandwidth: 52.619↓, 50.520↑ Mbps
-Packet rate estimate: 6323.9↓, 4550.2↑ (1↓, 20↑ TCP MSS/op)
-Test duration: 10.0084 s.
+Total data sent:     73.8 MiB (77344118 bytes)
+Total data received: 76.1 MiB (79758120 bytes)
+Bandwidth per channel: 2.511⇅ Mbps (313.9 kBps)
+Aggregate bandwidth: 63.735↓, 61.806↑ Mbps
+Packet rate estimate: 7702.4↓, 5517.8↑ (1↓, 20↑ TCP MSS/op)
+Test duration: 10.0113 s.
 --- DONE ---
 
 --- reimu_kqueue - 2030--
@@ -23,12 +23,12 @@ Destination: [127.0.0.1]:2030
 Interface lo0 address [127.0.0.1]:0
 Using interface lo0 to connect to [127.0.0.1]:2030
 Ramped up to 50 connections.
-Total data sent:     74.4 MiB (78031000 bytes)
-Total data received: 72.6 MiB (76123116 bytes)
-Bandwidth per channel: 2.464⇅ Mbps (308.0 kBps)
-Aggregate bandwidth: 60.842↓, 62.367↑ Mbps
-Packet rate estimate: 7291.9↓, 5398.6↑ (1↓, 18↑ TCP MSS/op)
-Test duration: 10.0093 s.
+Total data sent:     4722.3 MiB (4951669146 bytes)
+Total data received: 999.4 MiB (1047993589 bytes)
+Bandwidth per channel: 95.929⇅ Mbps (11991.1 kBps)
+Aggregate bandwidth: 837.819↓, 3958.615↑ Mbps
+Packet rate estimate: 73935.2↓, 342196.8↑ (11↓, 40↑ TCP MSS/op)
+Test duration: 10.0069 s.
 --- DONE ---
 
 --- BENCH ECHO DONE ---

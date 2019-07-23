@@ -44,7 +44,6 @@ namespace reimu {
         size_t sended = 0;
         auto s = _output_buf->ToSlice();
         while (sended < s.size()) {
-            auto sended_s = _output_buf->ToSlice();
             size_t t = write(_channel->Fd(), s.data(), s.size());
             _output_buf->Consume(t);
             sended = sended + t;
@@ -70,8 +69,8 @@ namespace reimu {
 
     void TcpConn::handleRead() {
         refreshTimeoutTimer();
-        auto conn = shared_from_this();
         while (_state == TcpConn::CONNECTED) {
+            auto conn = shared_from_this();
             char buffer[READ_BUFFER_SIZE];
             bzero(buffer, READ_BUFFER_SIZE);
             size_t n = readImp(_channel->Fd(), buffer, sizeof(buffer));
