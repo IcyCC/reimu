@@ -71,4 +71,14 @@ namespace reimu  {
         _socket.reset();
     }
 
+    bool Channel::Readalbe() {
+        return _events & this->_loop->GetPoller()->REIMU_POLLIN;
+    }
+
+    bool Channel::Writable() {
+        return _events & this->_loop->GetPoller()->REIMU_POLLOUT;
+    }
+
+
+
 }

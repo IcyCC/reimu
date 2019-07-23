@@ -18,7 +18,7 @@ int main() {
     auto s = new reimu::TcpServer(loop, "0.0.0.0", 2099);
 
     s->OnConnMsg([](reimu::TcpConnPtr conn,  const std::string & msg) {
-        conn->Send("hello");
+        conn->Send(msg);
     });
 
     s->OnConnDisconnected([](reimu::TcpConnPtr conn) {

@@ -13,7 +13,7 @@ namespace reimu {
     public:
         DefaultEventLoopImp(EventLoop *loop) {
             _loop = loop;
-            _threading_pool = std::make_shared<ThreadingPool>(4,-1);
+            _threading_pool = std::make_shared<ThreadingPool>(3,-1);
             _threading_pool->Start();
             _poller = std::make_unique<Poller>();
         }

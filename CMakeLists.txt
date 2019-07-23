@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.12)
 project(reimu)
 
 set(CMAKE_CXX_STANDARD 17)
+
 include_directories(reimu)
-add_executable(reimu
+add_executable(reimu_poll
         reimu/SocketFd.cpp
         reimu/event/EventLoop.cpp
         reimu/Util.cpp
@@ -11,6 +12,7 @@ add_executable(reimu
         reimu/Channel.cpp
         reimu/poller/Poller.cpp
         reimu/poller/PPoller.cpp
+        reimu/poller/KQPoller.cpp
 
         reimu/Codec.cpp
         reimu/Buffer.cpp

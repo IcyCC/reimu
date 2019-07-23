@@ -100,6 +100,10 @@ namespace reimu {
 
         void CleanUp();
 
+        bool Readalbe();
+
+        bool Writable();
+
     };
 }
 
