@@ -12,7 +12,6 @@ add_executable(reimu_poll
         reimu/Channel.cpp
         reimu/poller/Poller.cpp
         reimu/poller/PPoller.cpp
-        reimu/poller/KQPoller.cpp
 
         reimu/Codec.cpp
         reimu/Buffer.cpp

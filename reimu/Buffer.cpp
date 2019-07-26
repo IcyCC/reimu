@@ -7,8 +7,6 @@
 
 namespace reimu {
     Slice Buffer::Read(size_t n) {
-        std::lock_guard<std::mutex> lock(_mutex);
-        prepend();
         if (_read_idx + n >= _write_idx) {
             auto s = Slice( &*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
             _read_idx = _write_idx;
@@ -49,7 +47,6 @@ namespace reimu {
     }
 
     Slice Buffer::ReadAll() {
-        std::lock_guard<std::mutex> lock(_mutex);
         prepend();
         auto s = Slice(&*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
         _read_idx = _write_idx;

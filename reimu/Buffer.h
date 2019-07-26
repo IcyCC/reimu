@@ -62,7 +62,7 @@ namespace reimu {
         Slice sub(int boff, int eoff = 0) const {
             Slice s(*this);
             s.pb_ += boff;
-            s.pe_ += eoff;
+            s.pe_ = s.pb_ + eoff + 1;
             return s;
         }
 
@@ -173,21 +173,18 @@ namespace reimu {
         Slice ReadAll();
 
         void PeekReadPos(size_t read_pos) {
-            std::lock_guard<std::mutex> lock(_mutex);
             if (read_pos > 0) {
                 _read_idx = read_pos;
             }
         };
 
         long GetReadPos() {
-            std::lock_guard<std::mutex> lock(_mutex);
             return _read_idx;
         }
 
         Buffer &Write(const std::string &s);
 
         void Consume(size_t n) {
-            std::lock_guard<std::mutex> lock(_mutex);
             if (_read_idx + n > _write_idx) {
                 _read_idx = _write_idx;
             } else {
@@ -196,7 +193,6 @@ namespace reimu {
         }
 
         Slice ToSlice() {
-            std::lock_guard<std::mutex> lock(_mutex);
             return Slice(&*(_v.begin() + _read_idx), &*(_v.begin() + _write_idx));
         }
 

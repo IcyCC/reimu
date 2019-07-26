@@ -20,12 +20,12 @@ function gobench {
     sleep 1
     echo "*** 50 connections, 10 seconds, 6 byte packets"
     nl=$'\r\n'
-    tcpkali --workers 1 -c 50 -T 10s -m "PING$nl" 127.0.0.1:$2
+    tcpkali --workers 1 -c 100 -T 10s -m "PING$nl" 127.0.0.1:$2
     echo "--- DONE ---"
     echo ""
 }
 
-gobench "reimu_poll"  2099
-pkill  reimu_poll
+#gobench "reimu_poll"  2099
+#pkill  reimu_poll
 gobench "reimu_kqueue"  2030
-pkill  reimu_kqueues
+#pkill  reimu_kqueues

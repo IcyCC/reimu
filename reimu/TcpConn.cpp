@@ -99,7 +99,7 @@ namespace reimu {
                 if (!msg.empty()) {
                     _input_buf->Consume(msg.size());
                     // 解析到数据 调用回调并且尝试再次解析
-                    _loop->CreateTask([this, msg, conn]() {
+                        _loop->CreateTask([this, msg, conn]() {
                         this->_msg_cb(conn, msg);
                     });
                     continue;
