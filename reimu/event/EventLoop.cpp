@@ -132,13 +132,12 @@ namespace reimu {
             const int  wait_offset = 100;
             ChannelList activeChannels;
             time_t current_time = util::TimeMilli();
-            int timer_wait = _poll_wait;
             auto it = _timers.upper_bound(std::make_pair(current_time + wait_offset ,  0));
             if (it != _timers.end()) {
-                timer_wait = it->first.first  - current_time;
+                _poll_wait = 0;
             }
 
-            _poller->Poll(std::min(timer_wait, _poll_wait), activeChannels);
+            _poller->Poll(_poll_wait, activeChannels);
             for (auto &c : activeChannels) {
                 // 并发处理
                 if (c->GetEvents() & (_poller->REIMU_POLLIN | _poller->REIMU_POLLERR)) {
