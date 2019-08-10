@@ -4,7 +4,7 @@ project(reimu)
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(reimu)
-add_executable(reimu_poll
+add_executable(reimu
         reimu/SocketFd.cpp
         reimu/event/EventLoop.cpp
         reimu/Util.cpp

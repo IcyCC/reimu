@@ -17,11 +17,11 @@ namespace reimu {
 
     void TcpServer::StartServer() {
         _acceptor->Listen();
-        INFO_LOG<<"服务器开始运行 监听: " + _acceptor->_listen_addr.ToString();
+        INFO_LOG.Log("服务器开始运行 监听: %s",  _acceptor->_listen_addr.ToString().c_str());
     }
 
     void TcpServer::handleAccept(reimu::SocketPtr socket) {
-        //INFO_LOG<<"服务器收到 来自: " + socket->_addr.ToString() + " 的请求";
+        INFO_LOG.Log("服务器收到 来自: %s 的请求", socket->_addr.ToString().c_str());
         auto c = std::make_shared<TcpConn>(_loop, _conn_timeout, socket);
         c->OnMsg(_conn_msg_cb);
         c->OnConnected(_conn_connected_cb);
@@ -39,7 +39,7 @@ namespace reimu {
     }
 
     void TcpServer::handleTimeout(reimu::TcpConnPtr conn) {
-        INFO_LOG <<"踢掉链接";
+        INFO_LOG.Log("踢掉链接");
         if (_conn_timeout_cb != nullptr){
             _conn_timeout_cb(conn);
         }

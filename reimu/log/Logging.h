@@ -51,34 +51,46 @@ namespace reimu {
 
     class InfoLogger : public  noncopyable{
     public:
-        const InfoLogger& operator<<(const std::string & s)const {
+        template <typename  ...Args>
+        void Log(const char* format, Args ...args) {
+            const int  MAX_LOG_LENGTH = 1024;
+            char s[MAX_LOG_LENGTH];
+            snprintf(s, sizeof(s),  format, args...);
             Logging::GetLogger()->Info(s);
-            return *this;
-        };
+        }
     };
 
     class DebugLogger : public  noncopyable{
     public:
-        const DebugLogger& operator<<(const std::string & s)const {
+        template <typename  ...Args>
+        void Log(const char*  format, Args ...args) {
+            const int  MAX_LOG_LENGTH = 1024;
+            char s[MAX_LOG_LENGTH];
+            snprintf(s, sizeof(s),  format, args...);
             Logging::GetLogger()->Debug(s);
-            return *this;
-        };
+        }
     };
 
     class WarnLogger : public  noncopyable{
     public:
-        const WarnLogger& operator<<(const std::string & s)const {
+        template <typename  ...Args>
+        void Log(const char* & format, Args ...args) {
+            const int  MAX_LOG_LENGTH = 1024;
+            char s[MAX_LOG_LENGTH];
+            snprintf(s, sizeof(s),  format, args...);
             Logging::GetLogger()->Warn(s);
-            return *this;
-        };
+        }
     };
 
     class ErrorLogger : public  noncopyable{
     public:
-       const ErrorLogger& operator<<(const std::string & s)const {
+        template <typename  ...Args>
+        void Log(const char* format, Args ...args) {
+            const int  MAX_LOG_LENGTH = 1024;
+            char s[MAX_LOG_LENGTH];
+            snprintf(s, sizeof(s),  format, args...);
             Logging::GetLogger()->Error(s);
-           return *this;
-        };
+        }
     };
 
     inline  InfoLogger INFO_LOG = InfoLogger();
