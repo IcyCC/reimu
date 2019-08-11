@@ -139,14 +139,16 @@ namespace reimu {
 
             _poller->Poll(_poll_wait, activeChannels);
             for (auto &c : activeChannels) {
-                // 并发处理
-                if (c->GetEvents() & (_poller->REIMU_POLLIN | _poller->REIMU_POLLERR)) {
-                    c->HandleRead();
-                }
-                if (c->GetEvents() & (_poller->REIMU_POLLOUT)) {
-                    c->HandleWrite();
-                } else {
-                    // 异常的事件
+                if (c) {
+                    // 并发处理
+                    if (c->GetEvents() & (_poller->REIMU_POLLIN | _poller->REIMU_POLLERR)) {
+                        c->HandleRead();
+                    }
+                    if (c->GetEvents() & (_poller->REIMU_POLLOUT)) {
+                        c->HandleWrite();
+                    } else {
+                        // 异常的事件
+                    }
                 }
             }
         }

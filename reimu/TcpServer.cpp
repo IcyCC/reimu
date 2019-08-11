@@ -21,7 +21,7 @@ namespace reimu {
     }
 
     void TcpServer::handleAccept(reimu::SocketPtr socket) {
-        INFO_LOG.Log("服务器收到 来自: %s 的请求", socket->_addr.ToString().c_str());
+        //INFO_LOG.Log("服务器收到 来自: %s 的请求", socket->_addr.ToString().c_str());
         auto c = std::make_shared<TcpConn>(_loop, _conn_timeout, socket);
         c->OnMsg(_conn_msg_cb);
         c->OnConnected(_conn_connected_cb);

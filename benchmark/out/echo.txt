@@ -1,19 +1,19 @@
 
 --- BENCH ECHO START ---
 
---- reimu_poll - 2099--
-./bench-echo.sh: line 19: 2099: command not found
+--- reimu - 3099--
+./bench-echo.sh: line 19: 3099: command not found
 *** 50 connections, 10 seconds, 6 byte packets
-Destination: [127.0.0.1]:2099
+Destination: [127.0.0.1]:3099
 Interface lo0 address [127.0.0.1]:0
-Using interface lo0 to connect to [127.0.0.1]:2099
+Using interface lo0 to connect to [127.0.0.1]:3099
 Ramped up to 100 connections.
-Total data sent:     4.8 MiB (5042728 bytes)
-Total data received: 13.1 MiB (13688732 bytes)
-Bandwidth per channel: 0.150⇅ Mbps (18.7 kBps)
-Aggregate bandwidth: 10.945↓, 4.032↑ Mbps
-Packet rate estimate: 997.7↓, 367.2↑ (1↓, 11↑ TCP MSS/op)
-Test duration: 10.0056 s.
+Total data sent:     71.0 MiB (74437596 bytes)
+Total data received: 0.6 MiB (666214 bytes)
+Bandwidth per channel: 0.601⇅ Mbps (75.1 kBps)
+Aggregate bandwidth: 0.533↓, 59.521↑ Mbps
+Packet rate estimate: 7937.5↓, 5416.3↑ (1↓, 10↑ TCP MSS/op)
+Test duration: 10.0049 s.
 --- DONE ---
 
 --- BENCH ECHO DONE ---

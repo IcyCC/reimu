@@ -25,7 +25,7 @@ function gobench {
     echo ""
 }
 
-gobench "reimu_poll"  2099
-pkill  reimu_poll
+gobench "reimu"  3099
+pkill  reimu
 #gobench "reimu_kqueue"  2030
 #pkill  reimu_kqueues
