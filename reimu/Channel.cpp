@@ -60,7 +60,6 @@ namespace reimu  {
     }
 
     void Channel::AttachSocket(SocketPtr socket) {
-        this->_loop->RemoveChannel(this);
         _socket.swap(socket);
         this->_loop->AddChannel(this);
     }
