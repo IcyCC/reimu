@@ -168,6 +168,9 @@ namespace reimu {
         size_t _write_idx = 0, _read_idx = 0;
         std::mutex _mutex;
     public:
+        Buffer () {
+           _v.reserve(4096);
+        }
         Slice Read(size_t n);
 
         Slice ReadAll();
