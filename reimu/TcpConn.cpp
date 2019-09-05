@@ -112,7 +112,9 @@ namespace reimu {
             if (!s.empty()) {
                 refreshTimeoutTimer();
                 size_t sended = writeImp(_channel->Fd(), s.data(), s.size());
-                _output_buf->Consume(sended);
+                if (sended > 0) {
+                    _output_buf->Consume(sended);
+                }
             }
         } else if (_state == TcpConnState::SHAKEHANDS) {
             refreshTimeoutTimer();
