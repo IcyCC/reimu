@@ -8,6 +8,25 @@
 #include "reimu_imp.h"
 
 namespace reimu {
+    struct AutoContext : noncopyable {
+    void *ctx;
+    std::function<void()> ctxDel;
+    AutoContext() : ctx(0) {}
+        template <class T>
+        T &context() {
+            if (ctx == NULL) {
+                ctx = new T();
+                ctxDel = [this] { delete (T *) ctx; };
+            }
+            return *(T *) ctx;
+        }
+        ~AutoContext() {
+            if (ctx)
+                ctxDel();
+        }
+    };
+
+
     class TcpConn : public std::enable_shared_from_this<TcpConn>, private noncopyable {
     public:
         enum TcpConnState {
@@ -34,7 +53,12 @@ namespace reimu {
         TimerPtr _timeout_timer;
 
         std::mutex _mutex;
+
     public:
+        AutoContext ctx_, internalCtx_;
+
+    public:
+
         TcpConn(EventLoop *loop, int timeout) : _loop(loop), _timeout(timeout) {
             _channel = std::make_unique<Channel>(_loop);
             _state = TcpConnState::IDLE;
@@ -130,6 +154,10 @@ namespace reimu {
 
         size_t writeImp(int fd, const void *buf, size_t bytes) { return ::write(fd, buf, bytes); };
 
+        template <class T>
+        T &context() {
+            return ctx_.context<T>();
+        }
 
     };
 }
