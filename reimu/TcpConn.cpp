@@ -98,7 +98,7 @@ namespace reimu {
             if (!msg.empty()) {
                 _input_buf->Consume(msg.size());
                 _loop->CreateTask([this, msg, conn]() {
-                    std::scoped_lock(this->_mutex);
+                    std::scoped_lock<std::mutex> lk(this->_mutex);
                     this->_msg_cb(conn, msg);
                 });
             }
